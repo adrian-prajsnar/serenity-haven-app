@@ -9,6 +9,11 @@ const StyledPagination = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
+
+  @media (max-width: 400px) {
+    flex-direction: column;
+    gap: 0.8rem;
+  }
 `;
 
 const P = styled.p`
@@ -57,6 +62,10 @@ const PaginationButton = styled.button`
   &:hover:not(:disabled) {
     background-color: var(--color-brand-600);
     color: var(--color-brand-50);
+  }
+
+  &[disabled] {
+    color: var(--color-grey-400);
   }
 `;
 

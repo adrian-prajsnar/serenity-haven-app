@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import BookingDataBox from '../../features/bookings/BookingDataBox';
 import styled from 'styled-components';
 
 import { formatCurrency } from '../../utils/helpers';
@@ -8,7 +7,8 @@ import { useBooking } from '../bookings/useBooking';
 import { useCheckin } from './useCheckin';
 import { useSettings } from '../settings/useSettings';
 
-import Row from '../../ui/Row';
+import BookingDataBox from '../../features/bookings/BookingDataBox';
+import WrappingRow from '../../ui/WrappingRow';
 import Heading from '../../ui/Heading';
 import ButtonGroup from '../../ui/ButtonGroup';
 import Button from '../../ui/Button';
@@ -17,11 +17,18 @@ import Spinner from '../../ui/Spinner';
 import Checkbox from '../../ui/Checkbox';
 
 const Box = styled.div`
-  /* Box */
   background-color: var(--color-grey-0);
   border: 1px solid var(--color-grey-100);
   border-radius: var(--border-radius-md);
   padding: 2.4rem 4rem;
+
+  @media (max-width: 1000px) {
+    padding: 1.8rem 3rem;
+  }
+
+  @media (max-width: 550px) {
+    padding: 1.6rem 2.4rem;
+  }
 `;
 
 function CheckinBooking() {
@@ -68,10 +75,10 @@ function CheckinBooking() {
 
   return (
     <>
-      <Row type='horizontal'>
+      <WrappingRow type='horizontal'>
         <Heading as='h1'>Check in booking #{bookingId}</Heading>
         <ButtonText onClick={moveBack}>&larr; Back</ButtonText>
-      </Row>
+      </WrappingRow>
 
       <BookingDataBox booking={booking} />
 

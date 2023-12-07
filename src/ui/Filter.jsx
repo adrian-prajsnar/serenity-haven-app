@@ -8,7 +8,10 @@ const StyledFilter = styled.div`
   border-radius: var(--border-radius-sm);
   padding: 0.4rem;
   display: flex;
+  align-items: center;
+  justify-content: center;
   gap: 0.4rem;
+  flex-wrap: wrap;
 `;
 
 const FilterButton = styled.button`

@@ -1,4 +1,6 @@
 import styled from 'styled-components';
+
+import { useDarkMode } from '../../context/DarkModeContext';
 import { useUser } from './useUser';
 
 const StyledUserAvatar = styled.div`
@@ -24,13 +26,14 @@ const Avatar = styled.img`
 function UserAvatar() {
   const { user } = useUser();
   const { fullName, avatar } = user.user_metadata;
+  const { isDarkMode } = useDarkMode();
+  const defaultAvatar = isDarkMode
+    ? '/default-user-dark.png'
+    : '/default-user-light.png';
 
   return (
     <StyledUserAvatar>
-      <Avatar
-        src={avatar || 'default-user.jpg'}
-        alt={`Avatar of ${fullName}`}
-      />
+      <Avatar src={avatar || defaultAvatar} alt={`Avatar of ${fullName}`} />
       <span>{fullName}</span>
     </StyledUserAvatar>
   );

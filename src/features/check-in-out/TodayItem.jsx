@@ -19,6 +19,11 @@ const StyledTodayItem = styled.li`
   &:first-child {
     border-top: 1px solid var(--color-grey-100);
   }
+
+  @media (max-width: 650px) {
+    grid-template-columns: 70fr 30fr;
+    padding: 1.6rem 0;
+  }
 `;
 
 const Guest = styled.div`
@@ -35,6 +40,7 @@ function TodayItem({ activity }) {
 
       <Flag src={guests.countryFlag} alt={`Flag of ${guests.country}`} />
       <Guest>{guests.fullName}</Guest>
+
       <div>{numNights} nights</div>
 
       {status === 'unconfirmed' && (
@@ -43,12 +49,15 @@ function TodayItem({ activity }) {
           variation='primary'
           as={Link}
           to={`/checkin/${id}`}
+          style={{ width: '9rem' }}
         >
           Check in
         </Button>
       )}
 
-      {status === 'checked-in' && <CheckoutButton bookingId={id} />}
+      {status === 'checked-in' && (
+        <CheckoutButton bookingId={id} width='9rem' />
+      )}
     </StyledTodayItem>
   );
 }

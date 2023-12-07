@@ -2,7 +2,7 @@ import { useCheckout } from '../check-in-out/useCheckout';
 
 import Button from '../../ui/Button';
 
-function CheckoutButton({ bookingId }) {
+function CheckoutButton({ bookingId, width }) {
   const { checkout, isCheckingOut } = useCheckout();
 
   return (
@@ -11,6 +11,7 @@ function CheckoutButton({ bookingId }) {
       size='small'
       onClick={() => checkout(bookingId)}
       disabled={isCheckingOut}
+      style={{ width: `${width}` }}
     >
       Check out
     </Button>

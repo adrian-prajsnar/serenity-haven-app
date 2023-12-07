@@ -1,19 +1,27 @@
+import styled from 'styled-components';
 import { useSearchParams } from 'react-router-dom';
 
 import { useCabins } from './useCabins';
 
-import Spinner from '../../ui/Spinner';
 import CabinRow from './CabinRow';
+import Spinner from '../../ui/Spinner';
 import Table from '../../ui/Table';
 import Menus from '../../ui/Menus';
 import Empty from '../../ui/Empty';
+
+const PhotoHeading = styled.div`
+  visibility: hidden;
+
+  @media (max-width: 1250px) {
+    visibility: visible;
+  }
+`;
 
 function CabinTable() {
   const { isLoading, cabins } = useCabins();
   const [searchParams] = useSearchParams();
 
   if (isLoading) return <Spinner />;
-
   if (!cabins.length) return <Empty resourceName='cabins' />;
 
   // 1) FILTER
@@ -36,9 +44,13 @@ function CabinTable() {
 
   return (
     <Menus>
-      <Table columns='0.6fr 1.8fr 2.2fr 1fr 1fr 1fr'>
+      <Table
+        columns='0.6fr 1.8fr 2.2fr 1fr 1fr 1fr'
+        query1={{ columns: '9rem 1fr 1fr', width: '1250px' }}
+        query2={{ columns: '6rem 1fr 1fr', width: '450px' }}
+      >
         <Table.Header>
-          <div></div>
+          <PhotoHeading>Photo</PhotoHeading>
           <div>Cabin</div>
           <div>Capacity</div>
           <div>Price</div>

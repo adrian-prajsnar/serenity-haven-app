@@ -1,7 +1,8 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 const StyledDataItem = styled.div`
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 1.6rem;
   padding: 0.8rem 0;

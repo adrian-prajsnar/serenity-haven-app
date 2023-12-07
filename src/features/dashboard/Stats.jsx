@@ -1,3 +1,4 @@
+import styled from 'styled-components';
 import {
   HiOutlineBanknotes,
   HiOutlineBriefcase,
@@ -9,19 +10,33 @@ import { formatCurrency } from '../../utils/helpers';
 
 import Stat from './Stat';
 
+const StyledStats = styled.div`
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-column: span 4;
+  column-gap: 2.4rem;
+
+  @media (max-width: 1400px) {
+    grid-template-columns: repeat(2, 1fr);
+    row-gap: 0.6rem;
+  }
+
+  @media (max-width: 750px) {
+    display: flex;
+    flex-direction: column;
+  }
+`;
+
 function Stats({ bookings, confirmedStays, numDays, cabinCount }) {
   const numBookings = bookings.length;
-
   const sales = bookings.reduce((acc, cur) => acc + cur.totalPrice, 0);
-
   const checkins = confirmedStays.length;
-
   const occupation =
     confirmedStays.reduce((acc, cur) => acc + cur.numNights, 0) /
     (numDays * cabinCount);
 
   return (
-    <>
+    <StyledStats>
       <Stat
         title='Bookings'
         color='blue'
@@ -46,7 +61,7 @@ function Stats({ bookings, confirmedStays, numDays, cabinCount }) {
         icon={<HiOutlineChartBar />}
         value={Math.round(occupation * 100) + '%'}
       ></Stat>
-    </>
+    </StyledStats>
   );
 }
 

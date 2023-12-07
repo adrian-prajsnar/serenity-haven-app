@@ -3,37 +3,51 @@ import styled from 'styled-components';
 
 const StyledTable = styled.div`
   border: 1px solid var(--color-grey-200);
-
   font-size: 1.4rem;
   background-color: var(--color-grey-0);
   border-radius: 7px;
-  overflow: hidden;
 `;
 
 const CommonRow = styled.div`
   display: grid;
   grid-template-columns: ${props => props.columns};
   column-gap: 2.4rem;
+  row-gap: 1.2rem;
   align-items: center;
-  transition: none;
+
+  @media (max-width: ${props => props.query1.width}) {
+    grid-template-columns: ${props => props.query1.columns};
+  }
+
+  @media (max-width: ${props => props.query2.width}) {
+    grid-template-columns: ${props => props.query2.columns};
+  }
 `;
 
 const StyledHeader = styled(CommonRow)`
   padding: 1.6rem 2.4rem;
-
   background-color: var(--color-grey-50);
   border-bottom: 1px solid var(--color-grey-100);
   text-transform: uppercase;
   letter-spacing: 0.4px;
   font-weight: 600;
   color: var(--color-grey-600);
+
+  @media (max-width: 750px) {
+    padding: 1.6rem;
+  }
 `;
 
 const StyledRow = styled(CommonRow)`
   padding: 1.2rem 2.4rem;
+  position: relative;
 
   &:not(:last-child) {
     border-bottom: 1px solid var(--color-grey-100);
+  }
+
+  @media (max-width: 750px) {
+    padding: 1.2rem 1.6rem;
   }
 `;
 
@@ -47,7 +61,7 @@ const Footer = styled.footer`
   justify-content: center;
   padding: 1.2rem;
 
-  /* This will hide the footer when it contains no child elements. Possible thanks to the parent selector :has 🎉 */
+  /* This will hide the footer when it contains no child elements */
   &:not(:has(*)) {
     display: none;
   }
@@ -62,29 +76,35 @@ const Empty = styled.p`
 
 const TableContext = createContext();
 
-function Table({ columns, children }) {
+function Table({ columns, query1 = {}, query2 = {}, children }) {
   return (
-    <TableContext.Provider value={{ columns }}>
+    <TableContext.Provider value={{ columns, query1, query2 }}>
       <StyledTable role='table'>{children}</StyledTable>
     </TableContext.Provider>
   );
 }
 
 function Header({ children }) {
-  const { columns } = useContext(TableContext);
+  const { columns, query1, query2 } = useContext(TableContext);
 
   return (
-    <StyledHeader role='row' columns={columns} as='header'>
+    <StyledHeader
+      role='row'
+      columns={columns}
+      query1={query1}
+      query2={query2}
+      as='header'
+    >
       {children}
     </StyledHeader>
   );
 }
 
 function Row({ children }) {
-  const { columns } = useContext(TableContext);
+  const { columns, query1, query2 } = useContext(TableContext);
 
   return (
-    <StyledRow role='row' columns={columns}>
+    <StyledRow role='row' columns={columns} query1={query1} query2={query2}>
       {children}
     </StyledRow>
   );

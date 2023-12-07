@@ -133,7 +133,7 @@ function BookingRow({
           </Menus.List>
         </Menus.Menu>
 
-        <Modal.Window name='delete'>
+        <Modal.Window name='delete' smallerWidth={true}>
           <ConfirmDelete
             resourceName='booking'
             disabled={isDeleting}

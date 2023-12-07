@@ -1,11 +1,11 @@
 import { useForm } from 'react-hook-form';
+
+import { useSignup } from './useSignup';
+
 import Button from '../../ui/Button';
 import Form from '../../ui/Form';
 import FormRow from '../../ui/FormRow';
 import Input from '../../ui/Input';
-import { useSignup } from './useSignup';
-
-// Email regex: /\S+@\S+\.\S+/
 
 function SignupForm() {
   const { signup, isLoading } = useSignup();
@@ -81,7 +81,6 @@ function SignupForm() {
       </FormRow>
 
       <FormRow>
-        {/* type is an HTML attribute! */}
         <Button
           variation='secondary'
           type='reset'

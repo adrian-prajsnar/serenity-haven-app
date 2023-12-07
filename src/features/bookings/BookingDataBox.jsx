@@ -13,11 +13,9 @@ import DataItem from '../../ui/DataItem';
 import { Flag } from '../../ui/Flag';
 
 const StyledBookingDataBox = styled.section`
-  /* Box */
   background-color: var(--color-grey-0);
   border: 1px solid var(--color-grey-100);
   border-radius: var(--border-radius-md);
-
   overflow: hidden;
 `;
 
@@ -25,9 +23,12 @@ const Header = styled.header`
   background-color: var(--color-brand-500);
   padding: 2rem 4rem;
   color: #e0e7ff;
+  color: var(--color-brand-50);
   font-size: 1.8rem;
   font-weight: 500;
   display: flex;
+  flex-wrap: wrap;
+  gap: 1.6rem;
   align-items: center;
   justify-content: space-between;
 
@@ -49,16 +50,33 @@ const Header = styled.header`
     font-size: 2rem;
     margin-left: 4px;
   }
+
+  @media (max-width: 1000px) {
+    padding: 1.6rem 3.2rem;
+  }
+
+  @media (max-width: 550px) {
+    padding: 1.2rem 2.4rem;
+  }
 `;
 
 const Section = styled.section`
   padding: 3.2rem 4rem 1.2rem;
+
+  @media (max-width: 1000px) {
+    padding: 2.4rem 3rem 0.8rem;
+  }
+
+  @media (max-width: 550px) {
+    padding: 1.6rem 2rem 0.6rem;
+  }
 `;
 
 const Guest = styled.div`
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 1.2rem;
+  gap: 1.6rem;
   margin-bottom: 1.6rem;
   color: var(--color-grey-500);
 
@@ -70,8 +88,11 @@ const Guest = styled.div`
 
 const Price = styled.div`
   display: flex;
+  gap: 2.4rem;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
+
   padding: 1.6rem 3.2rem;
   border-radius: var(--border-radius-sm);
   margin-top: 2.4rem;
@@ -92,6 +113,16 @@ const Price = styled.div`
     width: 2.4rem;
     color: currentColor !important;
   }
+
+  @media (max-width: 1000px) {
+    padding: 1.2rem 2.4rem;
+    margin-top: 1.8rem;
+  }
+
+  @media (max-width: 550px) {
+    padding: 0.8rem 1.6rem;
+    margin-top: 1.2rem;
+  }
 `;
 
 const Footer = styled.footer`
@@ -101,7 +132,6 @@ const Footer = styled.footer`
   text-align: right;
 `;
 
-// A purely presentational component
 function BookingDataBox({ booking }) {
   const {
     created_at,

@@ -28,7 +28,7 @@ function LoginForm() {
   }
 
   return (
-    <Form onSubmit={handleSubmit}>
+    <Form placed='loginPage' onSubmit={handleSubmit}>
       <FormRowVertical label='Email address'>
         <Input
           type='email'
@@ -37,8 +37,10 @@ function LoginForm() {
           value={email}
           onChange={e => setEmail(e.target.value)}
           disabled={isLoading}
+          placed='loginPage'
         />
       </FormRowVertical>
+
       <FormRowVertical label='Password'>
         <Input
           type='password'
@@ -47,8 +49,10 @@ function LoginForm() {
           value={password}
           onChange={e => setPassword(e.target.value)}
           disabled={isLoading}
+          placed='loginPage'
         />
       </FormRowVertical>
+
       <FormRowVertical>
         <Button size='large' disabled={isLoading}>
           {!isLoading ? 'Log in' : <SpinnerMini />}

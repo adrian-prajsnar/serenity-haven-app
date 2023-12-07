@@ -17,7 +17,7 @@ import Settings from './pages/Settings';
 import Account from './pages/Account';
 import Login from './pages/Login';
 import PageNotFound from './pages/PageNotFound';
-import Checkin from './pages/Bookings';
+import Checkin from './pages/Checkin';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -61,7 +61,7 @@ function App() {
         <Toaster
           position='top-center'
           gutter={12}
-          containerStyle={{ margin: '8px' }}
+          containerStyle={{ margin: '0.8rem' }}
           toastOptions={{
             success: {
               duration: 3000,
@@ -70,9 +70,13 @@ function App() {
               duration: 5000,
             },
             style: {
-              fontSize: '16px',
-              maxWidth: '500px',
-              padding: '16px 24px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '1.6rem',
+              fontSize: '1.6rem',
+              maxWidth: '50rem',
+              padding: '1.6rem 2.4rem',
               backgroundColor: 'var(--color-grey-0)',
               color: 'var(--color-grey-700)',
             },

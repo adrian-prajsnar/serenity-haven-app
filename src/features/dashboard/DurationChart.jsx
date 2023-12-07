@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { useState } from 'react';
 import {
   Cell,
   Legend,
@@ -26,6 +27,10 @@ const ChartBox = styled.div`
 
   & .recharts-pie-label-text {
     font-weight: 600;
+  }
+
+  @media (max-width: 750px) {
+    padding: 1.6rem;
   }
 `;
 
@@ -141,14 +146,24 @@ function prepareData(startData, stays) {
 }
 
 function DurationChart({ confirmedStays }) {
+  const [currentWidth, setCurrentWidth] = useState(null);
   const { isDarkMode } = useDarkMode();
   const startData = isDarkMode ? startDataDark : startDataLight;
   const data = prepareData(startData, confirmedStays);
+  const horizontalLayout = currentWidth > 398;
+
+  function handleResize(width) {
+    setCurrentWidth(width);
+  }
 
   return (
     <ChartBox>
       <Heading as='h2'>Stay duration summary</Heading>
-      <ResponsiveContainer width='100%' height={240}>
+      <ResponsiveContainer
+        width='100%'
+        height={horizontalLayout ? 240 : 300}
+        onResize={handleResize}
+      >
         <PieChart>
           <Pie
             data={data}
@@ -156,8 +171,8 @@ function DurationChart({ confirmedStays }) {
             dataKey='value'
             innerRadius={85}
             outerRadius={110}
-            cx='40%'
-            cy='50%'
+            cx={horizontalLayout ? '40%' : '50%'}
+            cy={horizontalLayout ? '50%' : '47%'}
             paddingAngle={3}
           >
             {data.map(entry => (
@@ -170,10 +185,10 @@ function DurationChart({ confirmedStays }) {
           </Pie>
           <Tooltip />
           <Legend
-            verticalAlign='middle'
-            align='right'
-            width='30%'
-            layout='vertical'
+            verticalAlign={horizontalLayout ? 'middle' : 'bottom'}
+            align={horizontalLayout ? 'right' : 'center'}
+            width={horizontalLayout ? '30%' : '100%'}
+            layout={horizontalLayout ? 'vertical' : 'horizontal'}
             iconSize={15}
             iconType='circle'
           />

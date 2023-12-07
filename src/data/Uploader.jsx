@@ -1,66 +1,63 @@
-import { useState } from "react";
-import { isFuture, isPast, isToday } from "date-fns";
-import supabase from "../services/supabase";
-import Button from "../ui/Button";
-import { subtractDates } from "../utils/helpers";
+import styled from 'styled-components';
+import { useState } from 'react';
+import { isFuture, isPast, isToday } from 'date-fns';
 
-import { bookings } from "./data-bookings";
-import { cabins } from "./data-cabins";
-import { guests } from "./data-guests";
+import supabase from '../services/supabase';
+import { subtractDates } from '../utils/helpers';
+import { defaultBookingSettings } from '../utils/constants';
+import { bookings } from './data-bookings';
+import { cabins } from './data-cabins';
+import { guests } from './data-guests';
 
-// const originalSettings = {
-//   minBookingLength: 3,
-//   maxBookingLength: 30,
-//   maxGuestsPerBooking: 10,
-//   breakfastPrice: 15,
-// };
+import Button from '../ui/Button';
+import Heading from '../ui/Heading';
+import SpinnerMini from '../ui/SpinnerMini';
 
 async function deleteGuests() {
-  const { error } = await supabase.from("guests").delete().gt("id", 0);
+  const { error } = await supabase.from('guests').delete().gt('id', 0);
   if (error) console.log(error.message);
 }
 
 async function deleteCabins() {
-  const { error } = await supabase.from("cabins").delete().gt("id", 0);
+  const { error } = await supabase.from('cabins').delete().gt('id', 0);
   if (error) console.log(error.message);
 }
 
 async function deleteBookings() {
-  const { error } = await supabase.from("bookings").delete().gt("id", 0);
+  const { error } = await supabase.from('bookings').delete().gt('id', 0);
   if (error) console.log(error.message);
 }
 
 async function createGuests() {
-  const { error } = await supabase.from("guests").insert(guests);
+  const { error } = await supabase.from('guests').insert(guests);
   if (error) console.log(error.message);
 }
 
 async function createCabins() {
-  const { error } = await supabase.from("cabins").insert(cabins);
+  const { error } = await supabase.from('cabins').insert(cabins);
   if (error) console.log(error.message);
 }
 
 async function createBookings() {
-  // Bookings need a guestId and a cabinId. We can't tell Supabase IDs for each object, it will calculate them on its own. So it might be different for different people, especially after multiple uploads. Therefore, we need to first get all guestIds and cabinIds, and then replace the original IDs in the booking data with the actual ones from the DB
   const { data: guestsIds } = await supabase
-    .from("guests")
-    .select("id")
-    .order("id");
-  const allGuestIds = guestsIds.map((cabin) => cabin.id);
+    .from('guests')
+    .select('id')
+    .order('id');
+  const allGuestIds = guestsIds.map(cabin => cabin.id);
   const { data: cabinsIds } = await supabase
-    .from("cabins")
-    .select("id")
-    .order("id");
-  const allCabinIds = cabinsIds.map((cabin) => cabin.id);
+    .from('cabins')
+    .select('id')
+    .order('id');
+  const allCabinIds = cabinsIds.map(cabin => cabin.id);
 
-  const finalBookings = bookings.map((booking) => {
+  const finalBookings = bookings.map(booking => {
     // Here relying on the order of cabins, as they don't have and ID yet
     const cabin = cabins.at(booking.cabinId - 1);
     const numNights = subtractDates(booking.endDate, booking.startDate);
     const cabinPrice = numNights * (cabin.regularPrice - cabin.discount);
     const extrasPrice = booking.hasBreakfast
-      ? numNights * 15 * booking.numGuests
-      : 0; // hardcoded breakfast price
+      ? numNights * defaultBookingSettings.breakfastPrice * booking.numGuests
+      : 0;
     const totalPrice = cabinPrice + extrasPrice;
 
     let status;
@@ -68,19 +65,19 @@ async function createBookings() {
       isPast(new Date(booking.endDate)) &&
       !isToday(new Date(booking.endDate))
     )
-      status = "checked-out";
+      status = 'checked-out';
     if (
       isFuture(new Date(booking.startDate)) ||
       isToday(new Date(booking.startDate))
     )
-      status = "unconfirmed";
+      status = 'unconfirmed';
     if (
       (isFuture(new Date(booking.endDate)) ||
         isToday(new Date(booking.endDate))) &&
       isPast(new Date(booking.startDate)) &&
       !isToday(new Date(booking.startDate))
     )
-      status = "checked-in";
+      status = 'checked-in';
 
     return {
       ...booking,
@@ -94,17 +91,30 @@ async function createBookings() {
     };
   });
 
-  console.log(finalBookings);
-
-  const { error } = await supabase.from("bookings").insert(finalBookings);
+  const { error } = await supabase.from('bookings').insert(finalBookings);
   if (error) console.log(error.message);
 }
 
+const StyledUploader = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  padding: 0.8rem;
+  margin-top: auto;
+  text-align: center;
+  color: var(--color-grey-600);
+  background-color: var(--color-grey-50);
+  border: 1px solid var(--color-grey-100);
+  border-radius: var(--border-radius-sm);
+`;
+
 function Uploader() {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingAll, setIsLoadingAll] = useState(false);
+  const [isLoadingBookings, setIsLoadingBookings] = useState(false);
 
   async function uploadAll() {
-    setIsLoading(true);
+    setIsLoadingAll(true);
+
     // Bookings need to be deleted FIRST
     await deleteBookings();
     await deleteGuests();
@@ -115,39 +125,34 @@ function Uploader() {
     await createCabins();
     await createBookings();
 
-    setIsLoading(false);
+    setIsLoadingAll(false);
+    window.location.reload();
   }
 
   async function uploadBookings() {
-    setIsLoading(true);
+    setIsLoadingBookings(true);
     await deleteBookings();
     await createBookings();
-    setIsLoading(false);
+    setIsLoadingBookings(false);
+    window.location.reload();
   }
 
   return (
-    <div
-      style={{
-        marginTop: "auto",
-        backgroundColor: "#e0e7ff",
-        padding: "8px",
-        borderRadius: "5px",
-        textAlign: "center",
-        display: "flex",
-        flexDirection: "column",
-        gap: "8px",
-      }}
-    >
-      <h3>SAMPLE DATA</h3>
+    <StyledUploader>
+      <Heading as='h6'>SAMPLE DATA</Heading>
 
-      <Button onClick={uploadAll} disabled={isLoading}>
-        Upload ALL
+      <Button variation='secondary' onClick={uploadAll} disabled={isLoadingAll}>
+        {isLoadingAll ? <SpinnerMini /> : 'Upload ALL'}
       </Button>
 
-      <Button onClick={uploadBookings} disabled={isLoading}>
-        Upload bookings ONLY
+      <Button
+        variation='secondary'
+        onClick={uploadBookings}
+        disabled={isLoadingBookings}
+      >
+        {isLoadingBookings ? <SpinnerMini /> : 'Upload bookings ONLY'}
       </Button>
-    </div>
+    </StyledUploader>
   );
 }
 

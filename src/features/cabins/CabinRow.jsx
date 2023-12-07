@@ -13,11 +13,16 @@ import Menus from '../../ui/Menus';
 
 const Img = styled.img`
   display: block;
+  margin-left: 0.3rem;
   width: 6.4rem;
   aspect-ratio: 3 / 2;
   object-fit: cover;
   object-position: center;
   transform: scale(1.5) translateX(-7px);
+
+  @media (max-width: 750px) {
+    margin-left: 1.1rem;
+  }
 `;
 
 const Cabin = styled.div`
@@ -66,14 +71,19 @@ function CabinRow({ cabin }) {
   return (
     <Table.Row>
       <Img src={image} />
+
       <Cabin>{name}</Cabin>
+
       <div>Fits up to {maxCapacity} guests</div>
+
       <Price>{formatCurrency(regularPrice)}</Price>
+
       {discount ? (
         <Discount>{formatCurrency(discount)}</Discount>
       ) : (
         <span>&mdash;</span>
       )}
+
       <div>
         <Modal>
           <Menus.Menu>
@@ -101,7 +111,7 @@ function CabinRow({ cabin }) {
               <CreateCabinForm cabinToUpdate={cabin} />
             </Modal.Window>
 
-            <Modal.Window name='delete'>
+            <Modal.Window name='delete' smallerWidth={true}>
               <ConfirmDelete
                 resourceName='cabin'
                 disabled={isDeleting}

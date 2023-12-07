@@ -1,14 +1,14 @@
 import { useForm } from 'react-hook-form';
 
+import { useCreateCabin } from './useCreateCabin';
+import { useUpdateCabin } from './useUpdateCabin';
+
 import Input from '../../ui/Input';
 import Form from '../../ui/Form';
 import Button from '../../ui/Button';
 import FileInput from '../../ui/FileInput';
 import Textarea from '../../ui/Textarea';
 import FormRow from '../../ui/FormRow';
-
-import { useCreateCabin } from './useCreateCabin';
-import { useUpdateCabin } from './useUpdateCabin';
 
 function CreateCabinForm({ cabinToUpdate = {}, onCloseModal }) {
   const { isCreating, createCabin } = useCreateCabin();
@@ -58,7 +58,7 @@ function CreateCabinForm({ cabinToUpdate = {}, onCloseModal }) {
       onSubmit={handleSubmit(onSubmit, onError)}
       type={onCloseModal ? 'modal' : 'regular'}
     >
-      <FormRow label='Cabin name' error={errors?.name?.message}>
+      <FormRow type='modal' label='Cabin name' error={errors?.name?.message}>
         <Input
           type='text'
           id='name'
@@ -69,7 +69,11 @@ function CreateCabinForm({ cabinToUpdate = {}, onCloseModal }) {
         />
       </FormRow>
 
-      <FormRow label='Maximum capacity' error={errors?.maxCapacity?.message}>
+      <FormRow
+        type='modal'
+        label='Maximum capacity'
+        error={errors?.maxCapacity?.message}
+      >
         <Input
           type='number'
           id='maxCapacity'
@@ -81,7 +85,11 @@ function CreateCabinForm({ cabinToUpdate = {}, onCloseModal }) {
         />
       </FormRow>
 
-      <FormRow label='Regular price' error={errors?.regularPrice?.message}>
+      <FormRow
+        type='modal'
+        label='Regular price'
+        error={errors?.regularPrice?.message}
+      >
         <Input
           type='number'
           id='regularPrice'
@@ -93,7 +101,7 @@ function CreateCabinForm({ cabinToUpdate = {}, onCloseModal }) {
         />
       </FormRow>
 
-      <FormRow label='Discount' error={errors?.discount?.message}>
+      <FormRow type='modal' label='Discount' error={errors?.discount?.message}>
         <Input
           type='number'
           id='discount'
@@ -109,6 +117,7 @@ function CreateCabinForm({ cabinToUpdate = {}, onCloseModal }) {
       </FormRow>
 
       <FormRow
+        type='modal'
         label='Description for website'
         error={errors?.description?.message}
       >
@@ -123,8 +132,9 @@ function CreateCabinForm({ cabinToUpdate = {}, onCloseModal }) {
         />
       </FormRow>
 
-      <FormRow label='Cabin photo' error={errors?.image?.message}>
+      <FormRow type='modal' label='Cabin photo' error={errors?.image?.message}>
         <FileInput
+          type='modal'
           id='image'
           accept='image/*'
           {...register('image', {
@@ -134,7 +144,6 @@ function CreateCabinForm({ cabinToUpdate = {}, onCloseModal }) {
       </FormRow>
 
       <FormRow>
-        {/* type is an HTML attribute! */}
         <Button
           variation='secondary'
           type='reset'

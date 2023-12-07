@@ -63,6 +63,12 @@ export async function deleteCabin(id) {
 
   if (error) {
     console.error(error);
+
+    if (error.code === '23503')
+      throw new Error(
+        'Cabin could not be deleted because of active bookings for this cabin'
+      );
+
     throw new Error('Cabin could not be deleted');
   }
 

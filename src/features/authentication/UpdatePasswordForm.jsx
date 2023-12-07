@@ -10,7 +10,6 @@ import Input from '../../ui/Input';
 function UpdatePasswordForm() {
   const { register, handleSubmit, formState, getValues, reset } = useForm();
   const { errors } = formState;
-
   const { updateUser, isUpdating } = useUpdateUser();
 
   function onSubmit({ password }) {
@@ -54,6 +53,7 @@ function UpdatePasswordForm() {
           })}
         />
       </FormRow>
+
       <FormRow>
         <Button onClick={reset} type='reset' variation='secondary'>
           Cancel

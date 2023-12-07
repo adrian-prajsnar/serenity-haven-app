@@ -1,28 +1,48 @@
+import { useEffect, useState } from 'react';
+
+import { useSettings } from './useSettings';
+import { useUpdateSetting } from './useUpdateSetting';
+import { useLoadDefaultSettings } from './useLoadDefaultSettings';
+
+import Button from '../../ui/Button';
 import Form from '../../ui/Form';
 import FormRow from '../../ui/FormRow';
 import Input from '../../ui/Input';
 import Spinner from '../../ui/Spinner';
 
-import { useSettings } from './useSettings';
-import { useUpdateSetting } from './useUpdateSetting';
-
 function UpdateSettingsForm() {
-  const {
-    isLoading,
-    settings: {
+  const { isLoading, settings } = useSettings();
+  const { isUpdating, updateSetting } = useUpdateSetting();
+  const { isLoadingDefault, loadDefaultSettings } = useLoadDefaultSettings();
+
+  const [minNights, setMinNights] = useState('');
+  const [maxNights, setMaxNights] = useState('');
+  const [maxGuests, setMaxGuests] = useState('');
+  const [bkfPrice, setBkfPrice] = useState('');
+
+  useEffect(() => {
+    const {
       minBookingLength,
       maxBookingLength,
       maxGuestsPerBooking,
       breakfastPrice,
-    } = {},
-  } = useSettings();
+    } = settings || {};
 
-  const { isUpdating, updateSetting } = useUpdateSetting();
+    setMinNights(minBookingLength || '');
+    setMaxNights(maxBookingLength || '');
+    setMaxGuests(maxGuestsPerBooking || '');
+    setBkfPrice(breakfastPrice || '');
+  }, [settings]);
 
   function handleUpdate(e, field) {
     const { value } = e.target;
     if (!value) return;
     updateSetting({ [field]: value });
+  }
+
+  function handleLoadDefaultSettings(e) {
+    e.preventDefault();
+    loadDefaultSettings();
   }
 
   if (isLoading) return <Spinner />;
@@ -33,8 +53,8 @@ function UpdateSettingsForm() {
         <Input
           type='number'
           id='min-nights'
-          defaultValue={minBookingLength}
-          disabled={isUpdating}
+          defaultValue={minNights}
+          disabled={isUpdating || isLoadingDefault}
           onBlur={e => handleUpdate(e, 'minBookingLength')}
         />
       </FormRow>
@@ -43,8 +63,8 @@ function UpdateSettingsForm() {
         <Input
           type='number'
           id='max-nights'
-          defaultValue={maxBookingLength}
-          disabled={isUpdating}
+          defaultValue={maxNights}
+          disabled={isUpdating || isLoadingDefault}
           onBlur={e => handleUpdate(e, 'maxBookingLength')}
         />
       </FormRow>
@@ -53,8 +73,8 @@ function UpdateSettingsForm() {
         <Input
           type='number'
           id='max-guests'
-          defaultValue={maxGuestsPerBooking}
-          disabled={isUpdating}
+          defaultValue={maxGuests}
+          disabled={isUpdating || isLoadingDefault}
           onBlur={e => handleUpdate(e, 'maxGuestsPerBooking')}
         />
       </FormRow>
@@ -63,10 +83,16 @@ function UpdateSettingsForm() {
         <Input
           type='number'
           id='breakfast-price'
-          defaultValue={breakfastPrice}
-          disabled={isUpdating}
+          defaultValue={bkfPrice}
+          disabled={isUpdating || isLoadingDefault}
           onBlur={e => handleUpdate(e, 'breakfastPrice')}
         />
+      </FormRow>
+
+      <FormRow>
+        <Button onClick={handleLoadDefaultSettings}>
+          Load default settings
+        </Button>
       </FormRow>
     </Form>
   );

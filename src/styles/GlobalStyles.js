@@ -3,18 +3,17 @@ import { createGlobalStyle } from 'styled-components';
 const GlobalStyles = createGlobalStyle`
 :root {
   &, &.light-mode{
-  /* Grey */
   --color-grey-0: #fff;
-  --color-grey-50: #f9fafb;
-  --color-grey-100: #f3f4f6;
-  --color-grey-200: #e5e7eb;
-  --color-grey-300: #d1d5db;
-  --color-grey-400: #9ca3af;
-  --color-grey-500: #6b7280;
-  --color-grey-600: #4b5563;
-  --color-grey-700: #374151;
-  --color-grey-800: #1f2937;
-  --color-grey-900: #111827;
+  --color-grey-50: #fafaf9;
+  --color-grey-100: #f5f5f4;
+  --color-grey-200: #e7e5e4;
+  --color-grey-300: #d6d3d1;
+  --color-grey-400: #a8a29e;
+  --color-grey-500: #78716c;
+  --color-grey-600: #57534e;
+  --color-grey-700: #44403c;
+  --color-grey-800: #292524;
+  --color-grey-900: #1c1917;
 
   --color-blue-100: #e0f2fe;
   --color-blue-700: #0369a1;
@@ -32,6 +31,7 @@ const GlobalStyles = createGlobalStyle`
   --color-red-800: #991b1b;
 
   --backdrop-color: rgba(255, 255, 255, 0.1);
+  --backdrop-color-grey-0: rgba(255, 255, 255, 0.7);
 
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
   --shadow-md: 0px 0.6rem 2.4rem rgba(0, 0, 0, 0.06);
@@ -42,17 +42,17 @@ const GlobalStyles = createGlobalStyle`
   }
 
 &.dark-mode{
-  --color-grey-0: #18212f;
---color-grey-50: #111827;
---color-grey-100: #1f2937;
---color-grey-200: #374151;
---color-grey-300: #4b5563;
---color-grey-400: #6b7280;
---color-grey-500: #9ca3af;
---color-grey-600: #d1d5db;
---color-grey-700: #e5e7eb;
---color-grey-800: #f3f4f6;
---color-grey-900: #f9fafb;
+--color-grey-0: #191613;
+--color-grey-50: #1c1917;
+--color-grey-100: #292524;
+--color-grey-200: #44403c;
+--color-grey-300: #57534e;
+--color-grey-400: #78716c;
+--color-grey-500: #a8a29e;
+--color-grey-600: #d6d3d1;
+--color-grey-700: #e7e5e4;
+--color-grey-800: #f5f5f4;
+--color-grey-900: #fafaf9;
 
 --color-blue-100: #075985;
 --color-blue-700: #e0f2fe;
@@ -70,6 +70,7 @@ const GlobalStyles = createGlobalStyle`
 --color-red-800: #991b1b;
 
 --backdrop-color: rgba(0, 0, 0, 0.3);
+--backdrop-color-grey-0: rgba(0, 0, 0, 0.7);
 
 --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
 --shadow-md: 0px 0.6rem 2.4rem rgba(0, 0, 0, 0.3);
@@ -79,15 +80,14 @@ const GlobalStyles = createGlobalStyle`
 --image-opacity: 90%;
 }
 
-  /* Indigo */
-  --color-brand-50: #eef2ff;
-  --color-brand-100: #e0e7ff;
-  --color-brand-200: #c7d2fe;
-  --color-brand-500: #6366f1;
-  --color-brand-600: #4f46e5;
-  --color-brand-700: #4338ca;
-  --color-brand-800: #3730a3;
-  --color-brand-900: #312e81;
+  --color-brand-50: #f0fdf4;
+  --color-brand-100: #dcfce7;
+  --color-brand-200: #bbf7d0;
+  --color-brand-500: #16a34a;
+  --color-brand-600: #15803d;
+  --color-brand-700: #166534;
+  --color-brand-800: #14532d;
+  --color-brand-900: #052e16;
 
   --border-radius-tiny: 3px;
   --border-radius-sm: 5px;
@@ -110,10 +110,16 @@ html {
   font-size: 62.5%;
 }
 
-body {
-  font-family: "Poppins", sans-serif;
-  color: var(--color-grey-700);
+@media (max-width: 550px){
+  html {
+    font-size: 56.25%
+  }
+}
 
+body {
+  font-family: 'Inter', sans-serif;
+  letter-spacing: 0.5px;
+  color: var(--color-grey-700);
   transition: color 0.3s, background-color 0.3s;
   min-height: 100vh;
   line-height: 1.5;
@@ -150,7 +156,6 @@ select:focus {
   outline-offset: -1px;
 }
 
-/* Parent selector, finally 😃 */
 button:has(svg) {
   line-height: 0;
 }

@@ -23,6 +23,10 @@ const StyledSalesChart = styled(DashboardBox)`
   & .recharts-cartesian-grid-vertical line {
     stroke: var(--color-grey-300);
   }
+
+  @media (max-width: 750px) {
+    padding: 1.6rem;
+  }
 `;
 
 function SalesChart({ bookings, numDays }) {
@@ -49,14 +53,14 @@ function SalesChart({ bookings, numDays }) {
     ? {
         totalSales: { stroke: '#4f46e5', fill: '#4f46e5' },
         extrasSales: { stroke: '#22c55e', fill: '#22c55e' },
-        text: '#e5e7eb',
-        background: '#18212f',
+        text: 'var(--color-grey-700)',
+        background: 'var(--color-grey-50)',
       }
     : {
         totalSales: { stroke: '#4f46e5', fill: '#c7d2fe' },
         extrasSales: { stroke: '#16a34a', fill: '#dcfce7' },
-        text: '#374151',
-        background: '#fff',
+        text: 'var(--color-grey-700)',
+        background: 'var(--color-grey-0)',
       };
 
   return (

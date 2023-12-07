@@ -1,7 +1,7 @@
+import styled, { css } from 'styled-components';
 import { cloneElement, createContext, useContext, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { HiXMark } from 'react-icons/hi2';
-import styled from 'styled-components';
 
 import { useOutsideClick } from '../hooks/useOutsideClick';
 
@@ -10,11 +10,29 @@ const StyledModal = styled.div`
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  max-height: 80vh;
+  max-width: 80rem;
+  width: 80vw;
   background-color: var(--color-grey-0);
   border-radius: var(--border-radius-lg);
   box-shadow: var(--shadow-lg);
   padding: 3.2rem 4rem;
+  overflow-y: auto;
   transition: all 0.5s;
+
+  ${props =>
+    props.smallerWidth &&
+    css`
+      max-width: 48rem;
+    `}
+
+  @media (max-width: 1000px) {
+    padding: 2.4rem 3rem;
+  }
+
+  @media (max-width: 550px) {
+    padding: 1.6rem 2rem;
+  }
 `;
 
 const Overlay = styled.div`
@@ -23,8 +41,7 @@ const Overlay = styled.div`
   left: 0;
   width: 100%;
   height: 100vh;
-  background-color: var(--backdrop-color);
-  backdrop-filter: blur(4px);
+  background-color: rgb(0, 0, 0, 0.8);
   z-index: 1000;
   transition: all 0.5s;
 `;
@@ -47,10 +64,19 @@ const Button = styled.button`
   & svg {
     width: 2.4rem;
     height: 2.4rem;
-    /* Sometimes we need both */
-    /* fill: var(--color-grey-500);
-    stroke: var(--color-grey-500); */
+    fill: var(--color-grey-500);
+    stroke: var(--color-grey-500);
     color: var(--color-grey-500);
+  }
+
+  @media (max-width: 1000px) {
+    top: 0.8rem;
+    right: 1.5rem;
+  }
+
+  @media (max-width: 550px) {
+    top: 0.4rem;
+    right: 1.2rem;
   }
 `;
 
@@ -75,7 +101,7 @@ function Open({ children, opens: opensWindowName }) {
   return cloneElement(children, { onClick: () => open(opensWindowName) });
 }
 
-function Window({ children, name }) {
+function Window({ children, name, smallerWidth = false }) {
   const { openName, close } = useContext(ModalContext);
   const ref = useOutsideClick(close);
 
@@ -83,7 +109,7 @@ function Window({ children, name }) {
 
   return createPortal(
     <Overlay>
-      <StyledModal ref={ref}>
+      <StyledModal ref={ref} smallerWidth={smallerWidth}>
         <Button onClick={close}>
           <HiXMark />
         </Button>
