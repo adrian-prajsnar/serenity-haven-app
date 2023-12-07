@@ -20,6 +20,13 @@ Serenity Haven is a full-stack application designed for seamless hotel managemen
 
 Serenity Haven is crafted to provide a serene and efficient hotel management experience, ensuring users can effortlessly navigate and control various aspects of their hotel operations.
 
+## Login Information for Guests
+
+Feel free to explore Serenity Haven using the following login credentials:
+
+- **Email address:** user.tester@example.com
+- **Password:** 1234
+
 ## Table of Contents
 
 - [Getting Started](#getting-started)
