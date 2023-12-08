@@ -28,6 +28,11 @@ const variations = {
     &:hover {
       background-color: var(--color-brand-700);
     }
+
+    &:focus-visible {
+      color: var(--color-brand-600);
+      background-color: var(--color-brand-50);
+    }
   `,
   secondary: css`
     color: var(--color-grey-600);
@@ -44,6 +49,12 @@ const variations = {
 
     &:hover {
       background-color: var(--color-red-800);
+    }
+
+    &:focus-visible {
+      outline-color: var(--color-red-700);
+      color: var(--color-red-700);
+      background-color: var(--color-red-100);
     }
   `,
 };

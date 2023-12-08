@@ -4,6 +4,7 @@ import { createPortal } from 'react-dom';
 import { HiXMark } from 'react-icons/hi2';
 
 import { useOutsideClick } from '../hooks/useOutsideClick';
+import { useKey } from '../hooks/useKey';
 
 const StyledModal = styled.div`
   position: fixed;
@@ -52,7 +53,7 @@ const Button = styled.button`
   padding: 0.4rem;
   border-radius: var(--border-radius-sm);
   transform: translateX(0.8rem);
-  transition: all 0.2s;
+  transition: background-color 0.2s;
   position: absolute;
   top: 1.2rem;
   right: 1.9rem;
@@ -87,6 +88,8 @@ function Modal({ children }) {
 
   const close = () => setOpenName('');
   const open = setOpenName;
+
+  useKey('escape', close);
 
   return (
     <ModalContext.Provider value={{ openName, close, open }}>

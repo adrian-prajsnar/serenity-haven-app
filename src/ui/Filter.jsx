@@ -30,7 +30,7 @@ const FilterButton = styled.button`
   font-size: 1.4rem;
   /* To give the same height as select */
   padding: 0.44rem 0.8rem;
-  transition: all 0.3s;
+  transition: background-color 0.3s;
 
   &:hover:not(:disabled) {
     background-color: var(--color-brand-600);
