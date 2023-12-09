@@ -76,11 +76,13 @@ function SalesChart({ bookings, numDays }) {
             dataKey='label'
             tick={{ fill: colors.text }}
             tickLine={{ stroke: colors.text }}
+            style={{ letterSpacing: '-0.5px' }}
           />
           <YAxis
             unit='$'
             tick={{ fill: colors.text }}
             tickLine={{ stroke: colors.text }}
+            style={{ letterSpacing: '-0.5px' }}
           />
           <CartesianGrid strokeDasharray='4' />
           <Tooltip contentStyle={{ backgroundColor: colors.background }} />
