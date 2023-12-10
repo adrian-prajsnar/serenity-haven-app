@@ -15,14 +15,6 @@ const Form = styled.form`
       }
     `}
 
-  ${props =>
-    props.placed === 'loginPage' &&
-    css`
-      @media (max-width: 1000px) {
-        background-color: var(--backdrop-color-grey-0);
-      }
-    `}
-
   overflow: hidden;
   font-size: 1.4rem;
 `;

@@ -1,5 +1,4 @@
 import supabase from './supabase';
-
 import { getToday } from '../utils/helpers';
 import { PAGE_SIZE } from '../utils/constants';
 
