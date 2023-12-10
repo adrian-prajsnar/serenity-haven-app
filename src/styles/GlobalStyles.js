@@ -153,14 +153,6 @@ input:disabled {
   color: var(--color-grey-500);
 }
 
-/* input:focus,
-button:focus,
-textarea:focus,
-select:focus {
-  outline: 2px solid var(--color-brand-600);
-  outline-offset: -1px;
-} */
-
 button:has(svg) {
   line-height: 0;
 }
@@ -191,6 +183,22 @@ img {
   /* For dark mode */
   filter: grayscale(var(--image-grayscale)) opacity(var(--image-opacity));
 }
+
+input:not([type="checkbox"]) {
+  box-shadow: 0 0 0 3rem var(--color-grey-0) inset !important;
+  transition: box-shadow 0.3s !important;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 3rem var(--color-grey-0) inset !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: var(--color-grey-700) !important;
+    caret-color: var(--color-grey-700) !important;
+}
+
 `;
 
 export default GlobalStyles;
