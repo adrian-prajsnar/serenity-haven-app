@@ -89,7 +89,7 @@ function Modal({ children }) {
   const close = () => setOpenName('');
   const open = setOpenName;
 
-  useKey('escape', close);
+  useKey('Escape', close);
 
   return (
     <ModalContext.Provider value={{ openName, close, open }}>

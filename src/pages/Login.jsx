@@ -61,10 +61,10 @@ const LogoBackground = styled.div`
 
 const TextBackground = styled.span`
   @media (max-width: 1000px) {
-    text-shadow: 0 0 15px var(--color-grey-0), 0 0 15px var(--color-grey-0),
-      0 0 15px var(--color-grey-0), 0 0 15px var(--color-grey-0),
-      0 0 15px var(--color-grey-0), 0 0 15px var(--color-grey-0),
-      0 0 15px var(--color-grey-0), 0 0 15px var(--color-grey-0);
+    text-shadow: 0 0 3px var(--color-grey-0), 0 0 3px var(--color-grey-0),
+      0 0 3px var(--color-grey-0), 0 0 3px var(--color-grey-0),
+      0 0 3px var(--color-grey-0), 0 0 3px var(--color-grey-0),
+      0 0 3px var(--color-grey-0), 0 0 3px var(--color-grey-0);
   }
 `;
 

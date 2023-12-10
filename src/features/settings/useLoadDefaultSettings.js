@@ -6,7 +6,7 @@ import { loadDefaultSettings as loadDefaultSettingsApi } from '../../services/ap
 export function useLoadDefaultSettings() {
   const queryClient = useQueryClient();
 
-  const { mutate: loadDefaultSettings, isLoading: isLoadingDefault } =
+  const { mutate: loadDefaultSettings, isLoading: isLoadingDefaultSettings } =
     useMutation({
       mutationFn: loadDefaultSettingsApi,
       onSuccess: () => {
@@ -20,6 +20,6 @@ export function useLoadDefaultSettings() {
 
   return {
     loadDefaultSettings,
-    isLoadingDefault,
+    isLoadingDefaultSettings,
   };
 }

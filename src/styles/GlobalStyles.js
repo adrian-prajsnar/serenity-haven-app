@@ -36,6 +36,7 @@ const GlobalStyles = createGlobalStyle`
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
   --shadow-md: 0px 0.6rem 2.4rem rgba(0, 0, 0, 0.06);
   --shadow-lg: 0 2.4rem 3.2rem rgba(0, 0, 0, 0.12);
+  --shadow-around: 0px 0px 5rem 5px rgba(0, 0, 0, 0.05);
 
   --image-grayscale: 0;
   --image-opacity: 100%;
@@ -75,6 +76,7 @@ const GlobalStyles = createGlobalStyle`
 --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
 --shadow-md: 0px 0.6rem 2.4rem rgba(0, 0, 0, 0.3);
 --shadow-lg: 0 2.4rem 3.2rem rgba(0, 0, 0, 0.4);
+--shadow-around: 0px 0px 5rem 5px rgba(0, 0, 0, 0.5);
 
 --image-grayscale: 10%;
 --image-opacity: 90%;
@@ -120,6 +122,7 @@ body {
   font-family: 'Inter', sans-serif;
   letter-spacing: 0.5px;
   color: var(--color-grey-700);
+  background-color: var(--color-grey-50);
   transition: color 0.3s, background-color 0.3s;
   min-height: 100vh;
   line-height: 1.5;
@@ -184,21 +187,41 @@ img {
   filter: grayscale(var(--image-grayscale)) opacity(var(--image-opacity));
 }
 
-input:not([type="checkbox"]) {
-  box-shadow: 0 0 0 3rem var(--color-grey-0) inset !important;
-  transition: box-shadow 0.3s !important;
+input:not([type="checkbox"]):not([disabled]) {
+  box-shadow: 0 0 0 3rem var(--color-grey-0) inset;
+  transition: box-shadow 0.3s, border 0.3s;
 }
 
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
 input:-webkit-autofill:active {
-    -webkit-box-shadow: 0 0 0 3rem var(--color-grey-0) inset !important;
-    -webkit-background-clip: text !important;
-    -webkit-text-fill-color: var(--color-grey-700) !important;
-    caret-color: var(--color-grey-700) !important;
+    -webkit-box-shadow: 0 0 0 3rem var(--color-grey-0) inset;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: var(--color-grey-700);
+    caret-color: var(--color-grey-700);
 }
 
+.fade-enter {
+  opacity: 0;
+  transform: scale(0.9);
+}
+
+.fade-enter-active {
+  opacity: 1;
+  transform: translateX(0);
+  transition: opacity 300ms, transform 300ms;
+}
+
+.fade-exit {
+  opacity: 1;
+}
+
+.fade-exit-active {
+  opacity: 0;
+  transform: scale(0.9);
+  transition: opacity 300ms, transform 300ms;
+}
 `;
 
 export default GlobalStyles;

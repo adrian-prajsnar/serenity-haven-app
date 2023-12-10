@@ -79,6 +79,7 @@ function App() {
               padding: '1.6rem 2.4rem',
               backgroundColor: 'var(--color-grey-0)',
               color: 'var(--color-grey-700)',
+              boxShadow: 'var(--shadow-around)',
             },
           }}
         />

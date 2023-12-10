@@ -18,7 +18,7 @@ const Img = styled.img`
   aspect-ratio: 3 / 2;
   object-fit: cover;
   object-position: center;
-  transform: scale(1.5) translateX(-7px);
+  transform: scale(1.5) translateX(-0.7rem);
 
   @media (max-width: 750px) {
     margin-left: 1.1rem;

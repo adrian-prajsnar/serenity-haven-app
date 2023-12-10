@@ -6,6 +6,7 @@ import Button from '../../ui/Button';
 import Form from '../../ui/Form';
 import FormRow from '../../ui/FormRow';
 import Input from '../../ui/Input';
+import SpinnerMini from '../../ui/SpinnerMini';
 
 function SignupForm() {
   const { signup, isLoading } = useSignup();
@@ -89,7 +90,9 @@ function SignupForm() {
         >
           Cancel
         </Button>
-        <Button disabled={isLoading}>Create new user</Button>
+        <Button width='14.2rem' disabled={isLoading}>
+          {isLoading ? <SpinnerMini /> : 'Create new user'}
+        </Button>
       </FormRow>
     </Form>
   );

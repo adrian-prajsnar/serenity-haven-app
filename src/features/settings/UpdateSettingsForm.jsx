@@ -13,7 +13,8 @@ import Spinner from '../../ui/Spinner';
 function UpdateSettingsForm() {
   const { isLoading, settings } = useSettings();
   const { isUpdating, updateSetting } = useUpdateSetting();
-  const { isLoadingDefault, loadDefaultSettings } = useLoadDefaultSettings();
+  const { isLoadingDefaultSettings, loadDefaultSettings } =
+    useLoadDefaultSettings();
 
   const [minNights, setMinNights] = useState('');
   const [maxNights, setMaxNights] = useState('');
@@ -53,9 +54,10 @@ function UpdateSettingsForm() {
         <Input
           type='number'
           id='min-nights'
-          defaultValue={minNights}
-          disabled={isUpdating || isLoadingDefault}
+          value={minNights}
+          onChange={e => setMinNights(e.target.value)}
           onBlur={e => handleUpdate(e, 'minBookingLength')}
+          disabled={isUpdating || isLoadingDefaultSettings}
         />
       </FormRow>
 
@@ -63,9 +65,10 @@ function UpdateSettingsForm() {
         <Input
           type='number'
           id='max-nights'
-          defaultValue={maxNights}
-          disabled={isUpdating || isLoadingDefault}
+          value={maxNights}
+          onChange={e => setMaxNights(e.target.value)}
           onBlur={e => handleUpdate(e, 'maxBookingLength')}
+          disabled={isUpdating || isLoadingDefaultSettings}
         />
       </FormRow>
 
@@ -73,9 +76,10 @@ function UpdateSettingsForm() {
         <Input
           type='number'
           id='max-guests'
-          defaultValue={maxGuests}
-          disabled={isUpdating || isLoadingDefault}
+          value={maxGuests}
+          onChange={e => setMaxGuests(e.target.value)}
           onBlur={e => handleUpdate(e, 'maxGuestsPerBooking')}
+          disabled={isUpdating || isLoadingDefaultSettings}
         />
       </FormRow>
 
@@ -83,9 +87,10 @@ function UpdateSettingsForm() {
         <Input
           type='number'
           id='breakfast-price'
-          defaultValue={bkfPrice}
-          disabled={isUpdating || isLoadingDefault}
+          value={bkfPrice}
+          onChange={e => setBkfPrice(e.target.value)}
           onBlur={e => handleUpdate(e, 'breakfastPrice')}
+          disabled={isUpdating || isLoadingDefaultSettings}
         />
       </FormRow>
 

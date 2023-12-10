@@ -31,9 +31,16 @@ function Stats({ bookings, confirmedStays, numDays, cabinCount }) {
   const numBookings = bookings.length;
   const sales = bookings.reduce((acc, cur) => acc + cur.totalPrice, 0);
   const checkins = confirmedStays.length;
+
+  const occupationRate =
+    (confirmedStays.reduce((acc, cur) => acc + cur.numNights, 0) /
+      (numDays * cabinCount)) *
+    100;
+
   const occupation =
-    confirmedStays.reduce((acc, cur) => acc + cur.numNights, 0) /
-    (numDays * cabinCount);
+    Math.round(occupationRate) > 100
+      ? '100%'
+      : Math.round(occupationRate) + '%';
 
   return (
     <StyledStats>
@@ -59,7 +66,7 @@ function Stats({ bookings, confirmedStays, numDays, cabinCount }) {
         title='Occupancy rate'
         color='yellow'
         icon={<HiOutlineChartBar />}
-        value={Math.round(occupation * 100) + '%'}
+        value={occupation}
       ></Stat>
     </StyledStats>
   );
