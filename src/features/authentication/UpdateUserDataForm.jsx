@@ -10,11 +10,9 @@ import FormRow from '../../ui/FormRow';
 import Input from '../../ui/Input';
 
 function UpdateUserDataForm() {
-  const {
-    user: { email, user_metadata: { fullName: currentFullName } } = {
-      user: {},
-    },
-  } = useUser();
+  const { user } = useUser();
+  const currentFullName = user?.user_metadata?.fullName || '';
+  const email = user?.email || '';
 
   const { updateUser, isUpdating } = useUpdateUser();
 
