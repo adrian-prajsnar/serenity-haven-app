@@ -12,7 +12,15 @@ const Textarea = styled.textarea`
   height: 10rem;
 
   @media (max-width: 1000px) {
-    max-width: 43rem;
+    max-width: 35rem;
+  }
+
+  @media (max-width: 875px) {
+    max-width: 29rem;
+  }
+
+  @media (max-width: 620px) {
+    max-width: 100%;
   }
 `;
 
