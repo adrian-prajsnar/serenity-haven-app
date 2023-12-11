@@ -90,7 +90,7 @@ function SignupForm() {
         >
           Cancel
         </Button>
-        <Button width='14.2rem' disabled={isLoading}>
+        <Button minWidth='14.2rem' disabled={isLoading}>
           {isLoading ? <SpinnerMini /> : 'Create new user'}
         </Button>
       </FormRow>

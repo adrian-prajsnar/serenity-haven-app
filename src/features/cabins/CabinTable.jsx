@@ -46,8 +46,8 @@ function CabinTable() {
     <Menus>
       <Table
         columns='0.6fr 1.8fr 2.2fr 1fr 1fr 1fr'
-        query1={{ columns: '9rem 1fr 1fr', width: '1250px' }}
-        query2={{ columns: '6rem 1fr 1fr', width: '450px' }}
+        query1={{ columns: '9rem 1fr 2fr', width: '1250px' }}
+        query2={{ columns: '1fr 1fr 1fr', width: '320px' }}
       >
         <Table.Header>
           <PhotoHeading>Photo</PhotoHeading>
