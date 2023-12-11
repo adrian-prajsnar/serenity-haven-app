@@ -30,8 +30,8 @@ const variations = {
     }
 
     &:focus-visible {
-      color: var(--color-brand-600);
-      background-color: var(--color-brand-50);
+      color: var(--color-grey-600);
+      background-color: var(--color-grey-0);
     }
   `,
 
@@ -55,8 +55,8 @@ const variations = {
 
     &:focus-visible {
       outline-color: var(--color-red-700);
-      color: var(--color-red-700);
-      background-color: var(--color-red-100);
+      color: var(--color-grey-600);
+      background-color: var(--color-grey-0);
     }
   `,
 };
