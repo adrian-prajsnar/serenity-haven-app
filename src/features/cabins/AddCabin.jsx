@@ -4,7 +4,7 @@ import Button from '../../ui/Button';
 import Modal from '../../ui/Modal';
 import CreateCabinForm from './CreateCabinForm';
 
-const AddCabinContainer = styled.div`
+const StyledAddCabin = styled.div`
   @media (max-width: 550px) {
     display: flex;
     align-items: center;
@@ -14,7 +14,7 @@ const AddCabinContainer = styled.div`
 
 function AddCabin() {
   return (
-    <AddCabinContainer>
+    <StyledAddCabin>
       <Modal>
         <Modal.Open opens='cabin-form'>
           <Button>Add new cabin</Button>
@@ -23,7 +23,7 @@ function AddCabin() {
           <CreateCabinForm />
         </Modal.Window>
       </Modal>
-    </AddCabinContainer>
+    </StyledAddCabin>
   );
 }
 
