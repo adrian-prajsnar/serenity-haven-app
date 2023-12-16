@@ -1,7 +1,18 @@
-import { formatDistance, parseISO } from 'date-fns';
+import { formatDistance, parse, parseISO, set } from 'date-fns';
 import { differenceInDays } from 'date-fns/esm';
 
-// We want to make this function work for both Date objects and strings (which come from Supabase)
+export function formatDateStringToSupabase(dateString) {
+  const dateObject = parse(dateString, 'yyyy-MM-dd', new Date());
+  const formattedDate = set(dateObject, {
+    hours: 1,
+    minutes: 0,
+    seconds: 0,
+    milliseconds: 0,
+  });
+
+  return formattedDate.toISOString().slice(0, -1);
+}
+
 export const subtractDates = (dateStr1, dateStr2) =>
   differenceInDays(parseISO(String(dateStr1)), parseISO(String(dateStr2)));
 

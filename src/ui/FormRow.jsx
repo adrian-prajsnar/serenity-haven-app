@@ -43,7 +43,7 @@ const StyledFormRow = styled.div`
   ${props =>
     props.type === 'modal' &&
     css`
-      @media (max-width: 800px) {
+      @media (max-width: 815px) {
         grid-template-columns: 17rem 1fr 1.2fr;
       }
 
@@ -51,7 +51,7 @@ const StyledFormRow = styled.div`
         grid-template-columns: 10rem 1fr 1.2fr;
       }
 
-      @media (max-width: 620px) {
+      @media (max-width: 630px) {
         display: flex;
         align-items: stretch;
         flex-direction: column;

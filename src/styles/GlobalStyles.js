@@ -57,8 +57,8 @@ const GlobalStyles = createGlobalStyle`
 
   --color-blue-100: #075985;
   --color-blue-700: #e0f2fe;
-  --color-green-100: #166534;
-  --color-green-700: #dcfce7;
+  --color-green-100: #052e16;
+  --color-green-700: #C5FAC5;
   --color-yellow-100: #854d0e;
   --color-yellow-700: #fef9c3;
   --color-silver-100: #374151;
@@ -80,6 +80,10 @@ const GlobalStyles = createGlobalStyle`
 
   --image-grayscale: 10%;
   --image-opacity: 90%;
+
+  input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(100%);
+  }
 }
 
   --color-brand-50: #f0fdf4;
@@ -151,7 +155,8 @@ button {
 }
 
 select:disabled,
-input:disabled {
+input:disabled,
+textarea:disabled {
   background-color: var(--color-grey-200);
   color: var(--color-grey-500);
 }

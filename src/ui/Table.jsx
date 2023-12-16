@@ -6,6 +6,7 @@ const StyledTable = styled.div`
   font-size: 1.4rem;
   background-color: var(--color-grey-0);
   border-radius: 7px;
+  overflow-wrap: anywhere;
 `;
 
 const CommonRow = styled.div`
@@ -32,6 +33,7 @@ const StyledHeader = styled(CommonRow)`
   letter-spacing: 0.4px;
   font-weight: 600;
   color: var(--color-grey-600);
+  overflow-wrap: normal;
 
   @media (max-width: 750px) {
     padding: 1.6rem;

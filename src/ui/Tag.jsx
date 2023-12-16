@@ -9,6 +9,7 @@ const Tag = styled.span`
   border-radius: 100px;
   color: var(--color-${props => props.type}-700);
   background-color: var(--color-${props => props.type}-100);
+  overflow-wrap: normal;
 `;
 
 export default Tag;

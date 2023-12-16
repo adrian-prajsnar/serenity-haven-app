@@ -8,6 +8,10 @@ const SelectForm = styled.select`
   padding: 0.9rem 1.2rem;
   min-width: 22.1rem;
   text-overflow: ellipsis;
+
+  @media (max-width: 450px) {
+    min-width: auto;
+  }
 `;
 
 export default SelectForm;

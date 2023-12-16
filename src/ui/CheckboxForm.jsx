@@ -18,6 +18,7 @@ const CheckboxForm = styled.input`
     top: 1px;
     left: 3.4rem;
     width: max-content;
+    font-style: italic;
 
     @media (max-width: 550px) {
       top: 2px;

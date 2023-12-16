@@ -120,3 +120,29 @@ export async function deleteBooking(id) {
   }
   return data;
 }
+
+export async function createBooking({ newGuest, newBooking }) {
+  const { data: guestData, error: guestError } = await supabase
+    .from('guests')
+    .insert([newGuest])
+    .select();
+
+  if (guestError) {
+    console.error(guestError);
+    throw new Error('Guest could not be created');
+  }
+
+  const booking = { ...newBooking, guestId: guestData[0].id };
+
+  const { data: bookingData, error: bookingError } = await supabase
+    .from('bookings')
+    .insert([booking])
+    .select();
+
+  if (bookingError) {
+    console.error(bookingError);
+    throw new Error('Booking could not be created');
+  }
+
+  return bookingData;
+}

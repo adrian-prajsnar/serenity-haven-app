@@ -1,6 +1,16 @@
+import styled from 'styled-components';
+import toast from 'react-hot-toast';
 import { useForm } from 'react-hook-form';
+import { differenceInDays, format, parseISO, startOfDay } from 'date-fns';
 
 import { useCabins } from '../cabins/useCabins';
+import { useCreateBooking } from './useCreateBooking';
+import { defaultBookingSettings } from '../../utils/constants';
+import {
+  formatCurrency,
+  formatDateStringToSupabase,
+  subtractDates,
+} from '../../utils/helpers';
 
 import FormRow from '../../ui/FormRow';
 import Form from '../../ui/Form';
@@ -9,24 +19,125 @@ import SelectForm from '../../ui/SelectForm';
 import Button from '../../ui/Button';
 import CheckboxForm from '../../ui/CheckboxForm';
 import Textarea from '../../ui/Textarea';
-import { defaultBookingSettings } from '../../utils/constants';
-import { addDays, differenceInDays, format, isAfter, parseISO } from 'date-fns';
+import SpinnerMini from '../../ui/SpinnerMini';
+
+const CountryFlag = styled.div`
+  display: flex;
+  flex-direction: column;
+
+  & > p {
+    cursor: pointer;
+    margin-top: 0.6rem;
+    color: var(--color-grey-500);
+    font-size: 1.2rem;
+    font-style: italic;
+    margin-left: 0.2rem;
+  }
+
+  & > p > span {
+    font-weight: 600;
+  }
+
+  & > a {
+    width: fit-content;
+    color: var(--color-indigo-700);
+    margin-left: 0.2rem;
+    font-size: 1.2rem;
+  }
+`;
+
+const Summary = styled.p`
+  min-width: 22.1rem;
+  color: var(--color-green-700);
+
+  @media (max-width: 450px) {
+    min-width: auto;
+  }
+
+  & span {
+    font-weight: 500;
+  }
+`;
 
 function CreateBookingForm({ onCloseModal }) {
   const { cabins, isLoading: isLoadingCabins } = useCabins();
-  const { register, handleSubmit, formState, getValues } = useForm();
-  const { errors } = formState;
+  const { createBooking, isCreating } = useCreateBooking();
 
-  const formatedToday = `${new Date().getFullYear()}-${(
-    new Date().getMonth() + 1
-  )
-    .toString()
-    .padStart(2, '0')}-${new Date().getDate().toString().padStart(2, '0')}`;
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    getValues,
+    watch,
+    reset,
+  } = useForm({
+    defaultValues: {
+      cabinId: '',
+    },
+  });
 
-  const jurek = '2023-12-23';
+  const {
+    cabinId,
+    guestNumber,
+    guestFullName,
+    arrivalDate,
+    departureDate,
+    breakfastIncluded,
+    guestPaid,
+  } = watch();
+
+  const sortedCabins = cabins
+    ?.slice()
+    .sort((a, b) => a.name.localeCompare(b.name));
+
+  const selectedCabin = cabins?.find(cabin => cabin.id === parseInt(cabinId));
+
+  const numNights = subtractDates(departureDate, arrivalDate);
+
+  const cabinPrice =
+    numNights * (selectedCabin?.regularPrice - selectedCabin?.discount);
+
+  const extrasPrice = breakfastIncluded
+    ? numNights * defaultBookingSettings.breakfastPrice * parseInt(guestNumber)
+    : 0;
+
+  const totalPrice = cabinPrice + extrasPrice;
 
   function onSubmit(data) {
-    console.log(data);
+    const newGuest = {
+      fullName: data.guestFullName,
+      email: data.guestEmail,
+      nationality: data.guestNationality,
+      nationalID: data.guestNationalId,
+      countryFlag: data.guestCountryFlag,
+    };
+
+    const newBooking = {
+      created_at: new Date().toISOString(),
+      startDate: formatDateStringToSupabase(data.arrivalDate),
+      endDate: formatDateStringToSupabase(data.departureDate),
+      cabinId: +data.cabinId,
+      guestId: null,
+      hasBreakfast: data.breakfastIncluded,
+      observations: data.observations,
+      isPaid: data.guestPaid,
+      numGuests: +data.guestNumber,
+      numNights,
+      cabinPrice,
+      extrasPrice,
+      totalPrice,
+      status: 'unconfirmed',
+    };
+
+    createBooking(
+      { newGuest, newBooking },
+      {
+        onSuccess: () => {
+          reset();
+          onCloseModal?.();
+        },
+      }
+    );
   }
 
   function onError(data) {
@@ -44,17 +155,16 @@ function CreateBookingForm({ onCloseModal }) {
         error={errors?.cabinId?.message}
       >
         <SelectForm
-          // defaultValue={cabins?.[0].id}
           {...register('cabinId', { required: 'This field is required' })}
+          disabled={isLoadingCabins || isCreating}
         >
-          <option value='' disabled selected>
-            Choose your cabin
+          <option value='' disabled>
+            Choose the cabin
           </option>
-          {cabins?.map(cabin => (
+          {sortedCabins?.map(cabin => (
             <option key={cabin.id} value={cabin.id}>
-              {`${cabin.name} / (up to ${cabin.maxCapacity} people) / ${
-                cabin.regularPrice - (cabin.discount || 0)
-              } $`}
+              {cabin.name} / max: {cabin.maxCapacity} people /{' '}
+              {formatCurrency(cabin.regularPrice - cabin.discount || 0)} per day
             </option>
           ))}
         </SelectForm>
@@ -68,11 +178,15 @@ function CreateBookingForm({ onCloseModal }) {
         <Input
           type='number'
           id='guestNumber'
-          disabled={false}
+          disabled={isCreating}
           {...register('guestNumber', {
             required: 'This field is required',
+            validate: value => {
+              if (value > selectedCabin?.maxCapacity)
+                return 'Number of guests cannot exceed cabin capacity';
+              if (value < 1) return 'Number of guests cannot be less than one';
+            },
           })}
-          defaultValue={2}
         />
       </FormRow>
 
@@ -84,11 +198,10 @@ function CreateBookingForm({ onCloseModal }) {
         <Input
           type='text'
           id='guestFullName'
-          disabled={false}
+          disabled={isCreating}
           {...register('guestFullName', {
             required: 'This field is required',
           })}
-          defaultValue='Jurek Brzęczek'
         />
       </FormRow>
 
@@ -100,11 +213,14 @@ function CreateBookingForm({ onCloseModal }) {
         <Input
           type='text'
           id='guestEmail'
-          disabled={false}
+          disabled={isCreating}
           {...register('guestEmail', {
             required: 'This field is required',
+            pattern: {
+              value: /\S+@\S+\.\S+/,
+              message: 'Please provide a valid email address',
+            },
           })}
-          defaultValue='jurek.brzeczek71@gmail.com'
         />
       </FormRow>
 
@@ -116,11 +232,10 @@ function CreateBookingForm({ onCloseModal }) {
         <Input
           type='text'
           id='guestNationality'
-          disabled={false}
+          disabled={isCreating}
           {...register('guestNationality', {
             required: 'This field is required',
           })}
-          defaultValue='Poland'
         />
       </FormRow>
 
@@ -132,11 +247,10 @@ function CreateBookingForm({ onCloseModal }) {
         <Input
           type='text'
           id='guestNationalId'
-          disabled={false}
+          disabled={isCreating}
           {...register('guestNationalId', {
             required: 'This field is required',
           })}
-          defaultValue='CET 88892221'
         />
       </FormRow>
 
@@ -145,19 +259,38 @@ function CreateBookingForm({ onCloseModal }) {
         label="Applicant's country flag"
         error={errors?.guestCountryFlag?.message}
       >
-        <Input
-          type='text'
-          id='guestCountryFlag'
-          defaultValue='https://flagcdn.com/pl.svg'
-          disabled={false}
-          {...register('guestCountryFlag', {
-            required: 'This field is required',
-            pattern: {
-              value: /^https:\/\/flagcdn\.com\/([a-z]{2}(?:-[a-z]{2})?)\.svg$/,
-              message: 'Invalid country flag URL',
-            },
-          })}
-        />
+        <CountryFlag>
+          <Input
+            type='text'
+            id='guestCountryFlag'
+            disabled={isCreating}
+            {...register('guestCountryFlag', {
+              required: 'This field is required',
+              pattern: {
+                value:
+                  /^https:\/\/flagcdn\.com\/([a-z]{2}(?:-[a-z]{2})?)\.svg$/,
+                message: 'Invalid country flag URL',
+              },
+            })}
+          />
+          <p
+            role='button'
+            onClick={e => {
+              const text = e.target.closest('p').innerText;
+              navigator.clipboard.writeText(text);
+              toast.success('Text copied to clipboard');
+            }}
+          >
+            https://flagcdn.com/<span>gb</span>.svg
+          </p>
+          <a
+            rel='noreferrer'
+            target='_blank'
+            href='https://flagcdn.com/en/codes.json'
+          >
+            Country abbreviations
+          </a>
+        </CountryFlag>
       </FormRow>
 
       <FormRow
@@ -168,11 +301,12 @@ function CreateBookingForm({ onCloseModal }) {
         <Input
           type='date'
           id='arrivalDate'
-          disabled={false}
+          disabled={isCreating}
           {...register('arrivalDate', {
             required: 'This field is required',
             validate: value =>
-              value >= formatedToday || 'Arrival date cannot be before today',
+              value >= format(startOfDay(new Date()), 'yyyy-MM-dd') ||
+              'Arrival date cannot be before today',
           })}
         />
       </FormRow>
@@ -185,7 +319,7 @@ function CreateBookingForm({ onCloseModal }) {
         <Input
           type='date'
           id='departureDate'
-          disabled={false}
+          disabled={isCreating}
           {...register('departureDate', {
             required: 'This field is required',
             validate: value =>
@@ -200,29 +334,63 @@ function CreateBookingForm({ onCloseModal }) {
 
       <FormRow
         type='modal'
-        label='Include breakfast?'
-        error={errors?.breakfastIncluded?.message}
-      >
-        <CheckboxForm
-          content={`${defaultBookingSettings.breakfastPrice} $ per day`}
-          type='checkbox'
-          id='breakfastIncluded'
-          disabled={false}
-          {...register('breakfastIncluded')}
-        />
-      </FormRow>
-
-      <FormRow
-        type='modal'
         label='Observations'
         error={errors?.observations?.message}
       >
         <Textarea
           type='text'
           id='observations'
-          disabled={false}
+          disabled={isCreating}
           {...register('observations')}
         />
+      </FormRow>
+
+      <FormRow
+        type='modal'
+        label='Include breakfast'
+        error={errors?.breakfastIncluded?.message}
+      >
+        <CheckboxForm
+          content={`${formatCurrency(
+            defaultBookingSettings.breakfastPrice
+          )} per day`}
+          type='checkbox'
+          id='breakfastIncluded'
+          disabled={isCreating}
+          {...register('breakfastIncluded')}
+        />
+      </FormRow>
+
+      <FormRow
+        type='modal'
+        label='Payment in advance'
+        error={errors?.guestPaid?.message}
+      >
+        <CheckboxForm
+          content={guestPaid ? 'Paid' : 'Unpaid'}
+          type='checkbox'
+          id='guestPaid'
+          disabled={isCreating}
+          {...register('guestPaid')}
+        />
+      </FormRow>
+
+      <FormRow type='modal' label='Stay summary'>
+        <Summary>
+          <span>{guestFullName || 'Guest'}</span>'s stay at Serenity Hotel will
+          be for{' '}
+          <span>
+            {isNaN(numNights)
+              ? '(pick arrival and departure dates)'
+              : `${numNights} days`}
+          </span>{' '}
+          at a total cost of{' '}
+          <span>
+            {isNaN(totalPrice) ? '(select cabin)' : formatCurrency(totalPrice)}
+          </span>
+          ,{guestPaid ? ' which has ' : ' to be '}
+          <span>{guestPaid ? 'already been paid' : 'paid later'}</span>.
+        </Summary>
       </FormRow>
 
       <FormRow>
@@ -233,7 +401,9 @@ function CreateBookingForm({ onCloseModal }) {
         >
           Cancel
         </Button>
-        <Button disabled={false}>Create new booking</Button>
+        <Button minWidth='16.7rem' disabled={isCreating}>
+          {isCreating ? <SpinnerMini /> : 'Create new booking'}
+        </Button>
       </FormRow>
     </Form>
   );

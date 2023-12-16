@@ -7,6 +7,10 @@ const Input = styled.input`
   box-shadow: var(--shadow-sm);
   padding: 0.8rem 1.2rem;
   min-width: 22.1rem;
+
+  @media (max-width: 450px) {
+    min-width: auto;
+  }
 `;
 
 export default Input;

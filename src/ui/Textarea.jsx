@@ -22,6 +22,10 @@ const Textarea = styled.textarea`
   @media (max-width: 620px) {
     max-width: 100%;
   }
+
+  @media (max-width: 450px) {
+    min-width: auto;
+  }
 `;
 
 export default Textarea;
