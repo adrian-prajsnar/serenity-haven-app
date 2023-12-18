@@ -4,6 +4,7 @@ import {
   HiArrowDownOnSquare,
   HiArrowUpOnSquare,
   HiEye,
+  HiPencil,
   HiTrash,
 } from 'react-icons/hi2';
 import styled from 'styled-components';
@@ -18,6 +19,7 @@ import Table from '../../ui/Table';
 import Menus from '../../ui/Menus';
 import Modal from '../../ui/Modal';
 import ConfirmDelete from '../../ui/ConfirmDelete';
+import CreateBookingForm from '../bookings/CreateBookingForm';
 
 const Cabin = styled.div`
   font-size: 1.6rem;
@@ -46,20 +48,32 @@ const Amount = styled.div`
   font-weight: 500;
 `;
 
-function BookingRow({
-  booking: {
+function BookingRow({ booking }) {
+  const {
     id: bookingId,
     created_at,
     startDate,
     endDate,
-    numNights,
+    hasBreakfast,
+    observations,
+    isPaid,
     numGuests,
+    numNights,
+    cabinPrice,
+    extrasPrice,
     totalPrice,
     status,
-    guests: { fullName: guestName, email },
-    cabins: { name: cabinName },
-  },
-}) {
+    guests: {
+      id: guestId,
+      fullName: guestName,
+      email,
+      nationalID,
+      nationality,
+      countryFlag,
+    },
+    cabins: { id: cabinId, name: cabinName },
+  } = booking;
+
   const navigate = useNavigate();
   const { checkout, isCheckingOut } = useCheckout();
   const { deleteBooking, isDeleting } = useDeleteBooking();
@@ -127,19 +141,27 @@ function BookingRow({
               </Menus.Button>
             )}
 
+            <Modal.Open opens='update'>
+              <Menus.Button icon={<HiPencil />}>Update</Menus.Button>
+            </Modal.Open>
+
             <Modal.Open opens='delete'>
-              <Menus.Button icon={<HiTrash />}>Delete booking</Menus.Button>
+              <Menus.Button icon={<HiTrash />}>Delete</Menus.Button>
             </Modal.Open>
           </Menus.List>
-        </Menus.Menu>
 
-        <Modal.Window name='delete' smallerWidth={true}>
-          <ConfirmDelete
-            resourceName='booking'
-            disabled={isDeleting}
-            onConfirm={() => deleteBooking(bookingId)}
-          />
-        </Modal.Window>
+          <Modal.Window name='update'>
+            <CreateBookingForm bookingToUpdate={booking} />
+          </Modal.Window>
+
+          <Modal.Window name='delete' smallerWidth={true}>
+            <ConfirmDelete
+              resourceName='booking'
+              disabled={isDeleting}
+              onConfirm={() => deleteBooking(bookingId)}
+            />
+          </Modal.Window>
+        </Menus.Menu>
       </Modal>
     </Table.Row>
   );

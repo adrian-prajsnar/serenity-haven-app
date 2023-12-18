@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import toast from 'react-hot-toast';
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { differenceInDays, format, parseISO, startOfDay } from 'date-fns';
 
@@ -59,21 +60,46 @@ const Summary = styled.p`
   }
 `;
 
-function CreateBookingForm({ onCloseModal }) {
+function CreateBookingForm({ bookingToUpdate = {}, onCloseModal }) {
   const { cabins, isLoading: isLoadingCabins } = useCabins();
   const { createBooking, isCreating } = useCreateBooking();
+
+  const { id: updateId } = bookingToUpdate;
+  const isUpdateSession = Boolean(updateId);
 
   const {
     register,
     handleSubmit,
     formState: { errors },
+    setValue,
     getValues,
     watch,
     reset,
   } = useForm({
-    defaultValues: {
-      cabinId: '',
-    },
+    defaultValues: isUpdateSession
+      ? {
+          cabinId: bookingToUpdate.cabins.id,
+          guestNumber: bookingToUpdate.numGuests,
+          guestFullName: bookingToUpdate.guests.fullName,
+          guestEmail: bookingToUpdate.guests.email,
+          guestNationality: bookingToUpdate.guests.nationality,
+          guestNationalId: bookingToUpdate.guests.nationalID,
+          guestCountryFlag: bookingToUpdate.guests.countryFlag,
+          arrivalDate: format(
+            new Date(bookingToUpdate.startDate),
+            'yyyy-MM-dd'
+          ),
+          departureDate: format(
+            new Date(bookingToUpdate.endDate),
+            'yyyy-MM-dd'
+          ),
+          observations: bookingToUpdate.observations,
+          breakfastIncluded: bookingToUpdate.hasBreakfast,
+          guestPaid: bookingToUpdate.isPaid,
+        }
+      : {
+          cabinId: '',
+        },
   });
 
   const {
@@ -90,7 +116,9 @@ function CreateBookingForm({ onCloseModal }) {
     ?.slice()
     .sort((a, b) => a.name.localeCompare(b.name));
 
-  const selectedCabin = cabins?.find(cabin => cabin.id === parseInt(cabinId));
+  const selectedCabin = sortedCabins?.find(
+    cabin => cabin.id === parseInt(cabinId)
+  );
 
   const numNights = subtractDates(departureDate, arrivalDate);
 
@@ -102,6 +130,11 @@ function CreateBookingForm({ onCloseModal }) {
     : 0;
 
   const totalPrice = cabinPrice + extrasPrice;
+
+  useEffect(() => {
+    if (cabins)
+      setValue('cabinId', isUpdateSession ? bookingToUpdate?.cabins?.id : '');
+  }, [bookingToUpdate?.cabins?.id, cabins, isUpdateSession, setValue]);
 
   function onSubmit(data) {
     const newGuest = {
@@ -129,15 +162,17 @@ function CreateBookingForm({ onCloseModal }) {
       status: 'unconfirmed',
     };
 
-    createBooking(
-      { newGuest, newBooking },
-      {
-        onSuccess: () => {
-          reset();
-          onCloseModal?.();
-        },
-      }
-    );
+    if (isUpdateSession) console.log(data);
+    else
+      createBooking(
+        { newGuest, newBooking },
+        {
+          onSuccess: () => {
+            reset();
+            onCloseModal?.();
+          },
+        }
+      );
   }
 
   function onError(data) {
@@ -401,8 +436,17 @@ function CreateBookingForm({ onCloseModal }) {
         >
           Cancel
         </Button>
-        <Button minWidth='16.7rem' disabled={isCreating}>
-          {isCreating ? <SpinnerMini /> : 'Create new booking'}
+        <Button
+          minWidth={isUpdateSession ? '13.9rem' : '16.7rem'}
+          disabled={isCreating}
+        >
+          {isCreating ? (
+            <SpinnerMini />
+          ) : isUpdateSession ? (
+            'Update booking'
+          ) : (
+            'Create new booking'
+          )}
         </Button>
       </FormRow>
     </Form>

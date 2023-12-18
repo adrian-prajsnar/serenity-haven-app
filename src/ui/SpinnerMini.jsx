@@ -8,8 +8,8 @@ const rotate = keyframes`
 `;
 
 const SpinnerMini = styled(BiLoaderAlt)`
-  width: 2.1rem;
-  height: 2.1rem;
+  width: ${props => (props.buttonLarge ? '2.4rem' : '2.1rem')};
+  height: ${props => (props.buttonLarge ? '2.4rem' : '2.1rem')};
   animation: ${rotate} 1.5s infinite linear;
 `;
 
