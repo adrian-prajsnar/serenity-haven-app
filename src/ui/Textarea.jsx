@@ -19,7 +19,7 @@ const Textarea = styled.textarea`
     max-width: 29rem;
   }
 
-  @media (max-width: 620px) {
+  @media (max-width: 630px) {
     max-width: 100%;
   }
 

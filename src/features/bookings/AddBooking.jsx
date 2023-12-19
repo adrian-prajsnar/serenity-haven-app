@@ -19,7 +19,7 @@ function AddBooking() {
         <Modal.Open opens='booking-form'>
           <Button>Add new booking</Button>
         </Modal.Open>
-        <Modal.Window name='booking-form'>
+        <Modal.Window name='booking-form' outsideClickCloseModal={false}>
           <CreateBookingForm />
         </Modal.Window>
       </Modal>

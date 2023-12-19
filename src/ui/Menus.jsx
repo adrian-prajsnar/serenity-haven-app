@@ -52,6 +52,7 @@ const StyledButton = styled.button`
   text-align: left;
   background: none;
   border: none;
+  border-radius: var(--border-radius-md);
   padding: 1.2rem 2.4rem;
   font-size: 1.4rem;
   transition: background-color 0.2s;

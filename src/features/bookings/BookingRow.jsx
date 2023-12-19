@@ -141,18 +141,22 @@ function BookingRow({ booking }) {
               </Menus.Button>
             )}
 
-            <Modal.Open opens='update'>
-              <Menus.Button icon={<HiPencil />}>Update</Menus.Button>
-            </Modal.Open>
+            {status === 'unconfirmed' && (
+              <Modal.Open opens='update'>
+                <Menus.Button icon={<HiPencil />}>Update</Menus.Button>
+              </Modal.Open>
+            )}
 
             <Modal.Open opens='delete'>
               <Menus.Button icon={<HiTrash />}>Delete</Menus.Button>
             </Modal.Open>
           </Menus.List>
 
-          <Modal.Window name='update'>
-            <CreateBookingForm bookingToUpdate={booking} />
-          </Modal.Window>
+          {status === 'unconfirmed' && (
+            <Modal.Window name='update' outsideClickCloseModal={false}>
+              <CreateBookingForm bookingToUpdate={booking} />
+            </Modal.Window>
+          )}
 
           <Modal.Window name='delete' smallerWidth={true}>
             <ConfirmDelete

@@ -107,7 +107,7 @@ function CabinRow({ cabin }) {
               </Modal.Open>
             </Menus.List>
 
-            <Modal.Window name='update'>
+            <Modal.Window name='update' outsideClickCloseModal={false}>
               <CreateCabinForm cabinToUpdate={cabin} />
             </Modal.Window>
 

@@ -6,6 +6,7 @@ import { differenceInDays, format, parseISO, startOfDay } from 'date-fns';
 
 import { useCabins } from '../cabins/useCabins';
 import { useCreateBooking } from './useCreateBooking';
+import { useUpdateBooking } from './useUpdateBooking';
 import { defaultBookingSettings } from '../../utils/constants';
 import {
   formatCurrency,
@@ -63,9 +64,12 @@ const Summary = styled.p`
 function CreateBookingForm({ bookingToUpdate = {}, onCloseModal }) {
   const { cabins, isLoading: isLoadingCabins } = useCabins();
   const { createBooking, isCreating } = useCreateBooking();
+  const { updateBooking, isUpdating } = useUpdateBooking();
 
-  const { id: updateId } = bookingToUpdate;
-  const isUpdateSession = Boolean(updateId);
+  const isWorking = isCreating || isUpdating;
+  const bookingId = bookingToUpdate?.id;
+  const guestId = bookingToUpdate?.guests?.id;
+  const isUpdateSession = Boolean(bookingId);
 
   const {
     register,
@@ -137,7 +141,7 @@ function CreateBookingForm({ bookingToUpdate = {}, onCloseModal }) {
   }, [bookingToUpdate?.cabins?.id, cabins, isUpdateSession, setValue]);
 
   function onSubmit(data) {
-    const newGuest = {
+    const guest = {
       fullName: data.guestFullName,
       email: data.guestEmail,
       nationality: data.guestNationality,
@@ -145,12 +149,10 @@ function CreateBookingForm({ bookingToUpdate = {}, onCloseModal }) {
       countryFlag: data.guestCountryFlag,
     };
 
-    const newBooking = {
-      created_at: new Date().toISOString(),
+    const booking = {
       startDate: formatDateStringToSupabase(data.arrivalDate),
       endDate: formatDateStringToSupabase(data.departureDate),
       cabinId: +data.cabinId,
-      guestId: null,
       hasBreakfast: data.breakfastIncluded,
       observations: data.observations,
       isPaid: data.guestPaid,
@@ -159,13 +161,21 @@ function CreateBookingForm({ bookingToUpdate = {}, onCloseModal }) {
       cabinPrice,
       extrasPrice,
       totalPrice,
-      status: 'unconfirmed',
     };
 
-    if (isUpdateSession) console.log(data);
+    if (isUpdateSession)
+      updateBooking(
+        { guest, guestId, booking, bookingId },
+        {
+          onSuccess: () => {
+            reset();
+            onCloseModal?.();
+          },
+        }
+      );
     else
       createBooking(
-        { newGuest, newBooking },
+        { guest, booking },
         {
           onSuccess: () => {
             reset();
@@ -191,7 +201,7 @@ function CreateBookingForm({ bookingToUpdate = {}, onCloseModal }) {
       >
         <SelectForm
           {...register('cabinId', { required: 'This field is required' })}
-          disabled={isLoadingCabins || isCreating}
+          disabled={isLoadingCabins || isWorking}
         >
           <option value='' disabled>
             Choose the cabin
@@ -213,7 +223,7 @@ function CreateBookingForm({ bookingToUpdate = {}, onCloseModal }) {
         <Input
           type='number'
           id='guestNumber'
-          disabled={isCreating}
+          disabled={isWorking}
           {...register('guestNumber', {
             required: 'This field is required',
             validate: value => {
@@ -233,7 +243,7 @@ function CreateBookingForm({ bookingToUpdate = {}, onCloseModal }) {
         <Input
           type='text'
           id='guestFullName'
-          disabled={isCreating}
+          disabled={isWorking}
           {...register('guestFullName', {
             required: 'This field is required',
           })}
@@ -248,7 +258,7 @@ function CreateBookingForm({ bookingToUpdate = {}, onCloseModal }) {
         <Input
           type='text'
           id='guestEmail'
-          disabled={isCreating}
+          disabled={isWorking}
           {...register('guestEmail', {
             required: 'This field is required',
             pattern: {
@@ -267,7 +277,7 @@ function CreateBookingForm({ bookingToUpdate = {}, onCloseModal }) {
         <Input
           type='text'
           id='guestNationality'
-          disabled={isCreating}
+          disabled={isWorking}
           {...register('guestNationality', {
             required: 'This field is required',
           })}
@@ -282,7 +292,7 @@ function CreateBookingForm({ bookingToUpdate = {}, onCloseModal }) {
         <Input
           type='text'
           id='guestNationalId'
-          disabled={isCreating}
+          disabled={isWorking}
           {...register('guestNationalId', {
             required: 'This field is required',
           })}
@@ -298,7 +308,7 @@ function CreateBookingForm({ bookingToUpdate = {}, onCloseModal }) {
           <Input
             type='text'
             id='guestCountryFlag'
-            disabled={isCreating}
+            disabled={isWorking}
             {...register('guestCountryFlag', {
               required: 'This field is required',
               pattern: {
@@ -336,7 +346,7 @@ function CreateBookingForm({ bookingToUpdate = {}, onCloseModal }) {
         <Input
           type='date'
           id='arrivalDate'
-          disabled={isCreating}
+          disabled={isWorking}
           {...register('arrivalDate', {
             required: 'This field is required',
             validate: value =>
@@ -354,7 +364,7 @@ function CreateBookingForm({ bookingToUpdate = {}, onCloseModal }) {
         <Input
           type='date'
           id='departureDate'
-          disabled={isCreating}
+          disabled={isWorking}
           {...register('departureDate', {
             required: 'This field is required',
             validate: value =>
@@ -375,7 +385,7 @@ function CreateBookingForm({ bookingToUpdate = {}, onCloseModal }) {
         <Textarea
           type='text'
           id='observations'
-          disabled={isCreating}
+          disabled={isWorking}
           {...register('observations')}
         />
       </FormRow>
@@ -391,7 +401,7 @@ function CreateBookingForm({ bookingToUpdate = {}, onCloseModal }) {
           )} per day`}
           type='checkbox'
           id='breakfastIncluded'
-          disabled={isCreating}
+          disabled={isWorking}
           {...register('breakfastIncluded')}
         />
       </FormRow>
@@ -405,7 +415,7 @@ function CreateBookingForm({ bookingToUpdate = {}, onCloseModal }) {
           content={guestPaid ? 'Paid' : 'Unpaid'}
           type='checkbox'
           id='guestPaid'
-          disabled={isCreating}
+          disabled={isWorking}
           {...register('guestPaid')}
         />
       </FormRow>
@@ -433,14 +443,15 @@ function CreateBookingForm({ bookingToUpdate = {}, onCloseModal }) {
           variation='secondary'
           type='reset'
           onClick={() => onCloseModal?.()}
+          disabled={isWorking}
         >
           Cancel
         </Button>
         <Button
           minWidth={isUpdateSession ? '13.9rem' : '16.7rem'}
-          disabled={isCreating}
+          disabled={isWorking}
         >
-          {isCreating ? (
+          {isWorking ? (
             <SpinnerMini />
           ) : isUpdateSession ? (
             'Update booking'

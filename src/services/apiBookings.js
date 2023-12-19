@@ -93,56 +93,81 @@ export async function getStaysTodayActivity() {
     console.error(error);
     throw new Error('Bookings could not get loaded');
   }
+
   return data;
 }
 
-export async function updateBooking(id, obj) {
-  const { data, error } = await supabase
+export async function createBooking({ guest, booking }) {
+  const { data: guestData, error } = await supabase
+    .from('guests')
+    .insert([guest])
+    .select();
+
+  const newBooking = {
+    ...booking,
+    created_at: new Date().toISOString(),
+    guestId: guestData[0].id,
+    status: 'unconfirmed',
+  };
+
+  const { data, error: error2 } = await supabase
     .from('bookings')
-    .update(obj)
-    .eq('id', id)
+    .insert([newBooking])
+    .select();
+
+  if (error || error2) {
+    console.error(error || error2);
+    throw new Error('Booking could not be updated');
+  }
+
+  return data;
+}
+
+export async function updateBooking({ guest, guestId, booking, bookingId }) {
+  const { error } = await supabase
+    .from('guests')
+    .update(guest)
+    .eq('id', guestId)
     .select()
     .single();
 
-  if (error) {
-    console.error(error);
+  const updatedBooking = { ...booking, guestId };
+
+  const { data, error: error2 } = await supabase
+    .from('bookings')
+    .update(updatedBooking)
+    .eq('id', bookingId)
+    .select()
+    .single();
+
+  if (error || error2) {
+    console.error(error || error2);
     throw new Error('Booking could not be updated');
   }
+
   return data;
 }
 
 export async function deleteBooking(id) {
-  const { data, error } = await supabase.from('bookings').delete().eq('id', id);
+  const {
+    data: { guestId },
+    error,
+  } = await supabase.from('bookings').select('guestId').eq('id', id).single();
 
-  if (error) {
-    console.error(error);
+  const { data, error: error2 } = await supabase
+    .from('bookings')
+    .delete()
+    .eq('id', id);
+
+  const { error: error3 } = await supabase
+    .from('guests')
+    .delete()
+    .eq('id', guestId);
+
+  if (error || error2 || error3) {
+    console.error(error || error2 || error3);
     throw new Error('Booking could not be deleted');
   }
+
   return data;
-}
-
-export async function createBooking({ newGuest, newBooking }) {
-  const { data: guestData, error: guestError } = await supabase
-    .from('guests')
-    .insert([newGuest])
-    .select();
-
-  if (guestError) {
-    console.error(guestError);
-    throw new Error('Guest could not be created');
-  }
-
-  const booking = { ...newBooking, guestId: guestData[0].id };
-
-  const { data: bookingData, error: bookingError } = await supabase
-    .from('bookings')
-    .insert([booking])
-    .select();
-
-  if (bookingError) {
-    console.error(bookingError);
-    throw new Error('Booking could not be created');
-  }
-
-  return bookingData;
 }

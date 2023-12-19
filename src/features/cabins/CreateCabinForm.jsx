@@ -148,6 +148,7 @@ function CreateCabinForm({ cabinToUpdate = {}, onCloseModal }) {
           variation='secondary'
           type='reset'
           onClick={() => onCloseModal?.()}
+          disabled={isWorking}
         >
           Cancel
         </Button>

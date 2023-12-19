@@ -77,7 +77,7 @@ function BookingDetail() {
             <Button variation='danger'>Delete booking</Button>
           </Modal.Open>
 
-          <Modal.Window name='delete'>
+          <Modal.Window name='delete' smallerWidth={true}>
             <ConfirmDelete
               resourceName='booking'
               disabled={isDeleting}

@@ -113,7 +113,12 @@ function Open({ children, opens: opensWindowName }) {
   return cloneElement(children, { onClick: () => open(opensWindowName) });
 }
 
-function Window({ children, name, smallerWidth = false }) {
+function Window({
+  children,
+  name,
+  smallerWidth = false,
+  outsideClickCloseModal = true,
+}) {
   const { openName, close } = useContext(ModalContext);
   const ref = useOutsideClick(close);
 
@@ -121,7 +126,11 @@ function Window({ children, name, smallerWidth = false }) {
 
   return createPortal(
     <Overlay>
-      <StyledModal ref={ref} smallerWidth={smallerWidth}>
+      <StyledModal
+        ref={outsideClickCloseModal ? ref : null}
+        smallerWidth={smallerWidth}
+        role='dialog'
+      >
         <Button onClick={close}>
           <HiXMark />
         </Button>
