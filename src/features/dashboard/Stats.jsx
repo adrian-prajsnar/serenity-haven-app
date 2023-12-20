@@ -37,10 +37,11 @@ function Stats({ bookings, confirmedStays, numDays, cabinCount }) {
       (numDays * cabinCount)) *
     100;
 
-  const occupation =
-    Math.round(occupationRate) > 100
-      ? '100%'
-      : Math.round(occupationRate) + '%';
+  const occupation = isNaN(occupationRate)
+    ? '0%'
+    : Math.round(occupationRate) > 100
+    ? '100%'
+    : Math.round(occupationRate) + '%';
 
   return (
     <StyledStats>

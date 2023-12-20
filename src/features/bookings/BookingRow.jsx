@@ -51,27 +51,13 @@ const Amount = styled.div`
 function BookingRow({ booking }) {
   const {
     id: bookingId,
-    created_at,
     startDate,
     endDate,
-    hasBreakfast,
-    observations,
-    isPaid,
-    numGuests,
     numNights,
-    cabinPrice,
-    extrasPrice,
     totalPrice,
     status,
-    guests: {
-      id: guestId,
-      fullName: guestName,
-      email,
-      nationalID,
-      nationality,
-      countryFlag,
-    },
-    cabins: { id: cabinId, name: cabinName },
+    guests: { fullName: guestName, email },
+    cabins: { name: cabinName },
   } = booking;
 
   const navigate = useNavigate();
@@ -160,7 +146,7 @@ function BookingRow({ booking }) {
 
           <Modal.Window name='delete' smallerWidth={true}>
             <ConfirmDelete
-              resourceName='booking'
+              resourceName={`booking #${bookingId}`}
               disabled={isDeleting}
               onConfirm={() => deleteBooking(bookingId)}
             />

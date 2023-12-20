@@ -171,3 +171,14 @@ export async function deleteBooking(id) {
 
   return data;
 }
+
+export async function deleteAllBookings() {
+  const { data, error } = await supabase.from('bookings').delete().gt('id', 0);
+
+  if (error) {
+    console.error(error);
+    throw new Error('Bookings could not be deleted');
+  }
+
+  return data;
+}

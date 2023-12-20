@@ -1,6 +1,6 @@
 import CabinTable from '../features/cabins/CabinTable';
-import AddCabin from '../features/cabins/AddCabin';
 import CabinTableOperations from '../features/cabins/CabinTableOperations';
+import CabinOperations from '../features/cabins/CabinOperations';
 import Heading from '../ui/Heading';
 import Row from '../ui/Row';
 import WrappingRow from '../ui/WrappingRow';
@@ -15,7 +15,7 @@ function Cabins() {
 
       <Row>
         <CabinTable />
-        <AddCabin />
+        <CabinOperations />
       </Row>
     </>
   );

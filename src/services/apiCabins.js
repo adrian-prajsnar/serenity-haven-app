@@ -74,3 +74,18 @@ export async function deleteCabin(id) {
 
   return data;
 }
+
+export async function deleteAllCabins() {
+  const { data, error } = await supabase.from('cabins').delete().gt('id', 0);
+
+  if (error) {
+    console.error(error);
+
+    if (error.code === '23503')
+      throw new Error('Cabins could not be deleted because of active bookings');
+
+    throw new Error('Cabins could not be deleted');
+  }
+
+  return data;
+}
