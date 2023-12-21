@@ -207,7 +207,9 @@ input:-webkit-autofill:active {
   caret-color: var(--color-grey-700);
 }
 
-input:-webkit-autofill:disabled {
+input:-webkit-autofill:disabled,
+select:-webkit-autofill:disabled,
+textarea:-webkit-autofill:disabled {
   box-shadow: 0 0 0 3rem var(--color-grey-200) inset;
   color: var(--color-grey-500);
 }

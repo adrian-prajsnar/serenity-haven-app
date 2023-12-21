@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import toast from 'react-hot-toast';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { differenceInDays, format, parseISO, startOfDay } from 'date-fns';
@@ -7,6 +6,7 @@ import { differenceInDays, format, parseISO, startOfDay } from 'date-fns';
 import { useCabins } from '../cabins/useCabins';
 import { useCreateBooking } from './useCreateBooking';
 import { useUpdateBooking } from './useUpdateBooking';
+import { useCountryFlags } from '../../hooks/useCountryFlags';
 import { defaultBookingSettings } from '../../utils/constants';
 import {
   formatCurrency,
@@ -22,31 +22,6 @@ import Button from '../../ui/Button';
 import CheckboxForm from '../../ui/CheckboxForm';
 import Textarea from '../../ui/Textarea';
 import SpinnerMini from '../../ui/SpinnerMini';
-
-const CountryFlag = styled.div`
-  display: flex;
-  flex-direction: column;
-
-  & > p {
-    cursor: pointer;
-    margin-top: 0.6rem;
-    color: var(--color-grey-500);
-    font-size: 1.2rem;
-    font-style: italic;
-    margin-left: 0.2rem;
-  }
-
-  & > p > span {
-    font-weight: 600;
-  }
-
-  & > a {
-    width: fit-content;
-    color: var(--color-indigo-700);
-    margin-left: 0.2rem;
-    font-size: 1.2rem;
-  }
-`;
 
 const Summary = styled.p`
   min-width: 22.1rem;
@@ -65,6 +40,7 @@ function CreateBookingForm({ bookingToUpdate = {}, onCloseModal }) {
   const { cabins, isLoading: isLoadingCabins } = useCabins();
   const { createBooking, isCreating } = useCreateBooking();
   const { updateBooking, isUpdating } = useUpdateBooking();
+  const { countryFlags, isLoading: isLoadingCountryFlags } = useCountryFlags();
 
   const isWorking = isCreating || isUpdating;
   const bookingId = bookingToUpdate?.id;
@@ -103,18 +79,23 @@ function CreateBookingForm({ bookingToUpdate = {}, onCloseModal }) {
         }
       : {
           cabinId: '',
+          guestCountryFlag: '',
         },
   });
 
   const {
     cabinId,
-    guestNumber,
+    guestNumber = 2,
     guestFullName,
     arrivalDate,
     departureDate,
     breakfastIncluded,
     guestPaid,
   } = watch();
+
+  const sortedCountries = countryFlags
+    .slice()
+    .sort((a, b) => a.name.localeCompare(b.name));
 
   const sortedCabins = cabins
     ?.slice()
@@ -136,9 +117,16 @@ function CreateBookingForm({ bookingToUpdate = {}, onCloseModal }) {
   const totalPrice = cabinPrice + extrasPrice;
 
   useEffect(() => {
-    if (cabins)
-      setValue('cabinId', isUpdateSession ? bookingToUpdate?.cabins?.id : '');
-  }, [bookingToUpdate?.cabins?.id, cabins, isUpdateSession, setValue]);
+    if (cabins) setValue('cabinId', bookingToUpdate?.cabins?.id);
+    if (countryFlags)
+      setValue('guestCountryFlag', bookingToUpdate?.guests?.countryFlag);
+  }, [
+    bookingToUpdate?.cabins?.id,
+    bookingToUpdate?.guests?.countryFlag,
+    cabins,
+    countryFlags,
+    setValue,
+  ]);
 
   function onSubmit(data) {
     const guest = {
@@ -204,7 +192,7 @@ function CreateBookingForm({ bookingToUpdate = {}, onCloseModal }) {
           disabled={isLoadingCabins || isWorking}
         >
           <option value='' disabled>
-            Choose the cabin
+            Choose cabin
           </option>
           {sortedCabins?.map(cabin => (
             <option key={cabin.id} value={cabin.id}>
@@ -272,16 +260,35 @@ function CreateBookingForm({ bookingToUpdate = {}, onCloseModal }) {
       <FormRow
         type='modal'
         label="Applicant's nationality"
-        error={errors?.guestNationality?.message}
+        error={errors?.guestCountryFlag?.message}
       >
-        <Input
-          type='text'
-          id='guestNationality'
-          disabled={isWorking}
-          {...register('guestNationality', {
-            required: 'This field is required',
-          })}
-        />
+        <>
+          <SelectForm
+            {...register('guestCountryFlag', {
+              required: 'This field is required',
+            })}
+            disabled={isLoadingCountryFlags || isWorking}
+            onChange={e =>
+              setValue(
+                'guestNationality',
+                e.target.selectedOptions[0].getAttribute('data-name')
+              )
+            }
+          >
+            <option value='' disabled>
+              Choose country
+            </option>
+            {sortedCountries?.map(country => (
+              <option
+                key={country.code}
+                value={country.flagUrl}
+                data-name={country.name}
+              >
+                {country.name}
+              </option>
+            ))}
+          </SelectForm>
+        </>
       </FormRow>
 
       <FormRow
@@ -297,45 +304,6 @@ function CreateBookingForm({ bookingToUpdate = {}, onCloseModal }) {
             required: 'This field is required',
           })}
         />
-      </FormRow>
-
-      <FormRow
-        type='modal'
-        label="Applicant's country flag"
-        error={errors?.guestCountryFlag?.message}
-      >
-        <CountryFlag>
-          <Input
-            type='text'
-            id='guestCountryFlag'
-            disabled={isWorking}
-            {...register('guestCountryFlag', {
-              required: 'This field is required',
-              pattern: {
-                value:
-                  /^https:\/\/flagcdn\.com\/([a-z]{2}(?:-[a-z]{2})?)\.svg$/,
-                message: 'Invalid country flag URL',
-              },
-            })}
-          />
-          <p
-            role='button'
-            onClick={e => {
-              const text = e.target.closest('p').innerText;
-              navigator.clipboard.writeText(text);
-              toast.success('Text copied to clipboard');
-            }}
-          >
-            https://flagcdn.com/<span>gb</span>.svg
-          </p>
-          <a
-            rel='noreferrer'
-            target='_blank'
-            href='https://flagcdn.com/en/codes.json'
-          >
-            Country abbreviations
-          </a>
-        </CountryFlag>
       </FormRow>
 
       <FormRow
