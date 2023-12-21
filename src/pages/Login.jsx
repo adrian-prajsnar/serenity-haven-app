@@ -21,20 +21,28 @@ const LoginContainer = styled.div`
   justify-content: center;
   padding: 3.2rem 2.4rem;
   gap: 3.2rem;
-  background-color: var(--color-grey-50);
+  background: linear-gradient(
+    180deg,
+    var(--color-grey-0) 0%,
+    var(--color-grey-50) 100%
+  );
   z-index: 1;
-
-  @media (max-width: 1000px) {
-    background-color: var(--backdrop-color);
-  }
 
   @media (max-width: 550px) {
     grid-template-columns: 46rem;
+    padding: 3.2rem 1.2rem;
   }
 
-  @media (max-width: 450px) {
+  @media (max-width: 460px) {
     grid-template-columns: 1fr;
   }
+`;
+
+const LoginFooter = styled.p`
+  font-size: 1.4rem;
+  text-align: center;
+  padding: 0 2.4rem;
+  color: var(--color-grey-500);
 `;
 
 const BackgroundImg = styled.div`
@@ -43,44 +51,22 @@ const BackgroundImg = styled.div`
   background-size: cover;
 
   @media (max-width: 1000px) {
-    position: fixed;
-    width: 100vw;
-    height: 100vh;
-  }
-`;
-
-const LogoBackground = styled.div`
-  @media (max-width: 1000px) {
-    padding: 0.8rem;
-    margin: auto;
-    background-color: var(--backdrop-color-grey-0);
-    border-radius: var(--border-radius-md);
-    border: 1px solid var(--color-grey-100);
-  }
-`;
-
-const TextBackground = styled.span`
-  @media (max-width: 1000px) {
-    text-shadow: 0 0 3px var(--color-grey-0), 0 0 3px var(--color-grey-0),
-      0 0 3px var(--color-grey-0), 0 0 3px var(--color-grey-0),
-      0 0 3px var(--color-grey-0), 0 0 3px var(--color-grey-0),
-      0 0 3px var(--color-grey-0), 0 0 3px var(--color-grey-0);
+    display: none;
   }
 `;
 
 function Login() {
+  const currentYear = new Date().getFullYear();
+
   return (
     <LoginLayout>
       <LoginContainer>
-        <LogoBackground>
-          <Logo />
-        </LogoBackground>
-
-        <TextBackground>
-          <Heading as='h4'>Log in to your account</Heading>
-        </TextBackground>
-
+        <Logo />
+        <Heading as='h4'>Log in to your account</Heading>
         <LoginForm />
+        <LoginFooter>
+          &copy; {currentYear} Serenity Haven, Inc. All rights reserved.
+        </LoginFooter>
       </LoginContainer>
 
       <BackgroundImg />
