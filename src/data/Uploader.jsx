@@ -9,8 +9,6 @@ import { bookings } from './data-bookings';
 import { cabins } from './data-cabins';
 import { guests } from './data-guests';
 
-import Button from '../ui/Button';
-import Heading from '../ui/Heading';
 import SpinnerMini from '../ui/SpinnerMini';
 
 async function deleteGuests() {
@@ -98,14 +96,27 @@ async function createBookings() {
 const StyledUploader = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 0.8rem;
-  padding: 0.8rem;
-  margin-top: auto;
-  text-align: center;
-  color: var(--color-grey-600);
-  background-color: var(--color-grey-50);
-  border: 1px solid var(--color-grey-100);
-  border-radius: var(--border-radius-sm);
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  color: var(--color-grey-500);
+  font-size: 1.2rem;
+  font-style: italic;
+  overflow: hidden;
+
+  & > button {
+    background-color: transparent;
+    border: none;
+    transition: color 0.3s;
+  }
+
+  & > button:focus-visible,
+  & > button:hover {
+    outline: none;
+    color: var(--color-grey-700);
+    font-weight: 500;
+  }
 `;
 
 function Uploader() {
@@ -139,19 +150,13 @@ function Uploader() {
 
   return (
     <StyledUploader>
-      <Heading as='h6'>SAMPLE DATA</Heading>
+      <button onClick={uploadAll} disabled={isLoadingAll}>
+        {isLoadingAll ? <SpinnerMini /> : 'Upload sample data'}
+      </button>
 
-      <Button variation='secondary' onClick={uploadAll} disabled={isLoadingAll}>
-        {isLoadingAll ? <SpinnerMini /> : 'Upload ALL'}
-      </Button>
-
-      <Button
-        variation='secondary'
-        onClick={uploadBookings}
-        disabled={isLoadingBookings}
-      >
-        {isLoadingBookings ? <SpinnerMini /> : 'Upload bookings ONLY'}
-      </Button>
+      <button onClick={uploadBookings} disabled={isLoadingBookings}>
+        {isLoadingBookings ? <SpinnerMini /> : 'Upload bookings only'}
+      </button>
     </StyledUploader>
   );
 }

@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { HiArrowUpOnSquare } from 'react-icons/hi2';
+import { format } from 'date-fns';
 
 import { useMoveBack } from '../../hooks/useMoveBack';
 import { useBooking } from './useBooking';
@@ -35,13 +36,17 @@ function BookingDetail() {
   if (isLoading) return <Spinner />;
   if (!booking) return <Empty resourceName='booking' />;
 
-  const { status, id: bookingId } = booking;
+  const { startDate, status, id: bookingId } = booking;
 
   const statusToTagName = {
     unconfirmed: 'blue',
     'checked-in': 'green',
     'checked-out': 'silver',
   };
+
+  const isStartingDateToday =
+    format(new Date(startDate), 'yyyy-MM-dd') ===
+    format(new Date(), 'yyyy-MM-dd');
 
   return (
     <>
@@ -56,7 +61,7 @@ function BookingDetail() {
       <BookingDataBox booking={booking} />
 
       <ButtonGroup>
-        {status === 'unconfirmed' && (
+        {status === 'unconfirmed' && isStartingDateToday && (
           <Button onClick={() => navigate(`/checkin/${bookingId}`)}>
             Check in
           </Button>

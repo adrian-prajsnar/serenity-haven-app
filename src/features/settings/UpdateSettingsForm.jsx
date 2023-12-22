@@ -9,6 +9,7 @@ import Form from '../../ui/Form';
 import FormRow from '../../ui/FormRow';
 import Input from '../../ui/Input';
 import Spinner from '../../ui/Spinner';
+import SpinnerMini from '../../ui/SpinnerMini';
 
 function UpdateSettingsForm() {
   const { isLoading, settings } = useSettings();
@@ -95,8 +96,12 @@ function UpdateSettingsForm() {
       </FormRow>
 
       <FormRow>
-        <Button onClick={handleLoadDefaultSettings}>
-          Load default settings
+        <Button
+          minWidth='17.35rem'
+          disabled={isLoadingDefaultSettings}
+          onClick={handleLoadDefaultSettings}
+        >
+          {isLoadingDefaultSettings ? <SpinnerMini /> : 'Load default settings'}
         </Button>
       </FormRow>
     </Form>

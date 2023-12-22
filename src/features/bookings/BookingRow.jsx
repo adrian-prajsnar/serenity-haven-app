@@ -70,6 +70,10 @@ function BookingRow({ booking }) {
     'checked-out': 'silver',
   };
 
+  const isStartingDateToday =
+    format(new Date(startDate), 'yyyy-MM-dd') ===
+    format(new Date(), 'yyyy-MM-dd');
+
   return (
     <Table.Row>
       <Cabin>{cabinName}</Cabin>
@@ -108,7 +112,7 @@ function BookingRow({ booking }) {
               See details
             </Menus.Button>
 
-            {status === 'unconfirmed' && (
+            {status === 'unconfirmed' && isStartingDateToday && (
               <Menus.Button
                 icon={<HiArrowDownOnSquare />}
                 onClick={() => navigate(`/checkin/${bookingId}`)}

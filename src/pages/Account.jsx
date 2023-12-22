@@ -6,15 +6,21 @@ import Row from '../ui/Row';
 function Account() {
   return (
     <>
-      <Heading as='h1'>Update your account</Heading>
+      <Heading as='h1' type='centered'>
+        Update your account
+      </Heading>
 
       <Row>
-        <Heading as='h3'>Update user data</Heading>
+        <Heading as='h3' type='centered'>
+          Update user data
+        </Heading>
         <UpdateUserDataForm />
       </Row>
 
       <Row>
-        <Heading as='h3'>Update password</Heading>
+        <Heading as='h3' type='centered'>
+          Update password
+        </Heading>
         <UpdatePasswordForm />
       </Row>
     </>

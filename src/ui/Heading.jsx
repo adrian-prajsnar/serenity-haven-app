@@ -8,10 +8,6 @@ const Heading = styled.h1`
     css`
       font-size: 3rem;
       font-weight: 600;
-
-      @media (max-width: 550px) {
-        text-align: center;
-      }
     `}
 
   ${props =>
@@ -26,10 +22,6 @@ const Heading = styled.h1`
     css`
       font-size: 2rem;
       font-weight: 500;
-
-      @media (max-width: 550px) {
-        text-align: center;
-      }
     `}
 
   ${props =>
@@ -48,10 +40,11 @@ const Heading = styled.h1`
     `}
 
   ${props =>
-    props.as === 'h6' &&
+    props.type === 'centered' &&
     css`
-      font-size: 1.8rem;
-      font-weight: 700;
+      @media (max-width: 550px) {
+        text-align: center;
+      }
     `}
 `;
 

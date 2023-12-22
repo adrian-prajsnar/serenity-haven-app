@@ -3,11 +3,11 @@ import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { differenceInDays, format, parseISO, startOfDay } from 'date-fns';
 
+import { useSettings } from '../settings/useSettings';
 import { useCabins } from '../cabins/useCabins';
 import { useCreateBooking } from './useCreateBooking';
 import { useUpdateBooking } from './useUpdateBooking';
 import { useCountryFlags } from '../../hooks/useCountryFlags';
-import { defaultBookingSettings } from '../../utils/constants';
 import {
   formatCurrency,
   formatDateStringToSupabase,
@@ -37,6 +37,7 @@ const Summary = styled.p`
 `;
 
 function CreateBookingForm({ bookingToUpdate = {}, onCloseModal }) {
+  const { settings } = useSettings();
   const { cabins, isLoading: isLoadingCabins } = useCabins();
   const { createBooking, isCreating } = useCreateBooking();
   const { updateBooking, isUpdating } = useUpdateBooking();
@@ -111,7 +112,7 @@ function CreateBookingForm({ bookingToUpdate = {}, onCloseModal }) {
     numNights * (selectedCabin?.regularPrice - selectedCabin?.discount);
 
   const extrasPrice = breakfastIncluded
-    ? numNights * defaultBookingSettings.breakfastPrice * parseInt(guestNumber)
+    ? numNights * settings?.breakfastPrice * parseInt(guestNumber)
     : 0;
 
   const totalPrice = cabinPrice + extrasPrice;
@@ -335,12 +336,23 @@ function CreateBookingForm({ bookingToUpdate = {}, onCloseModal }) {
           disabled={isWorking}
           {...register('departureDate', {
             required: 'This field is required',
-            validate: value =>
-              differenceInDays(
-                parseISO(value),
-                parseISO(getValues('arrivalDate'))
-              ) >= defaultBookingSettings.minBookingLength ||
-              `Stay has to be at least for ${defaultBookingSettings.minBookingLength} nights`,
+            validate: value => {
+              if (
+                differenceInDays(
+                  parseISO(value),
+                  parseISO(getValues('arrivalDate'))
+                ) < settings?.minBookingLength
+              )
+                return `Stay has to be at least for ${settings?.minBookingLength} nights`;
+
+              if (
+                differenceInDays(
+                  parseISO(value),
+                  parseISO(getValues('arrivalDate'))
+                ) > settings?.maxBookingLength
+              )
+                return `Stay cannot be more than ${settings?.maxBookingLength} nights`;
+            },
           })}
         />
       </FormRow>
@@ -364,9 +376,7 @@ function CreateBookingForm({ bookingToUpdate = {}, onCloseModal }) {
         error={errors?.breakfastIncluded?.message}
       >
         <CheckboxForm
-          content={`${formatCurrency(
-            defaultBookingSettings.breakfastPrice
-          )} per day`}
+          content={`${formatCurrency(settings?.breakfastPrice)} per day`}
           type='checkbox'
           id='breakfastIncluded'
           disabled={isWorking}
