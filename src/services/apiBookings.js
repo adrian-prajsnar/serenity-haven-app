@@ -97,7 +97,7 @@ export async function getStaysTodayActivity() {
   return data;
 }
 
-export async function checkInBooking(id, obj) {
+export async function updateBookingStatus(id, obj) {
   const { data, error } = await supabase
     .from('bookings')
     .update(obj)
@@ -107,7 +107,7 @@ export async function checkInBooking(id, obj) {
 
   if (error) {
     console.error(error);
-    throw new Error('Booking could not be set to check-in');
+    throw new Error('Booking status could not be updated');
   }
 
   return data;
