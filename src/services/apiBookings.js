@@ -97,6 +97,22 @@ export async function getStaysTodayActivity() {
   return data;
 }
 
+export async function checkInBooking(id, obj) {
+  const { data, error } = await supabase
+    .from('bookings')
+    .update(obj)
+    .eq('id', id)
+    .select()
+    .single();
+
+  if (error) {
+    console.error(error);
+    throw new Error('Booking could not be set to check-in');
+  }
+
+  return data;
+}
+
 export async function createBooking({ guest, booking }) {
   const { data: guestData, error } = await supabase
     .from('guests')
