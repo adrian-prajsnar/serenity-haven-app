@@ -109,7 +109,9 @@ function CreateBookingForm({ bookingToUpdate = {}, onCloseModal }) {
   );
 
   const numNights =
-    differenceInDays(new Date(departureDate), new Date(arrivalDate)) <= 0
+    differenceInDays(new Date(departureDate), new Date(arrivalDate)) <= 0 ||
+    differenceInDays(new Date(departureDate), new Date(arrivalDate)) >
+      settings?.maxBookingLength
       ? NaN
       : differenceInDays(new Date(departureDate), new Date(arrivalDate));
 
