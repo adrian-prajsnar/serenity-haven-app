@@ -1,4 +1,4 @@
-import { useBookings } from './useBookings';
+import { useSortedBookings } from './useSortedBookings';
 
 import BookingRow from './BookingRow';
 import Table from '../../ui/Table';
@@ -8,7 +8,7 @@ import Spinner from '../../ui/Spinner';
 import Pagination from '../../ui/Pagination';
 
 function BookingTable() {
-  const { bookings, isLoading, count } = useBookings();
+  const { bookings, isLoading, count } = useSortedBookings();
 
   if (isLoading) return <Spinner />;
 

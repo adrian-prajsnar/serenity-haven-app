@@ -37,6 +37,13 @@ const StyledModal = styled.div`
       max-width: 48rem;
     `}
 
+  ${props =>
+    props.fixedHeight &&
+    css`
+      height: 80vh;
+    `}
+
+
   @media (max-width: 1000px) {
     padding: 2.4rem 3rem;
   }
@@ -117,6 +124,7 @@ function Window({
   children,
   name,
   smallerWidth = false,
+  fixedHeight = false,
   outsideClickCloseModal = true,
 }) {
   const { openName, close } = useContext(ModalContext);
@@ -129,6 +137,7 @@ function Window({
       <StyledModal
         ref={outsideClickCloseModal ? ref : null}
         smallerWidth={smallerWidth}
+        fixedHeight={fixedHeight}
         role='dialog'
       >
         <Button onClick={close}>

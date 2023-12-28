@@ -17,7 +17,11 @@ function BookingOperations() {
         <Modal.Open opens='booking-form'>
           <Button>Add new booking</Button>
         </Modal.Open>
-        <Modal.Window name='booking-form' outsideClickCloseModal={false}>
+        <Modal.Window
+          name='booking-form'
+          outsideClickCloseModal={false}
+          fixedHeight={true}
+        >
           <CreateBookingForm />
         </Modal.Window>
       </Modal>

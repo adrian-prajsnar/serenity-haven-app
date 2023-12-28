@@ -5,6 +5,7 @@ import { isFuture, isPast, isToday } from 'date-fns';
 import supabase from '../services/supabase';
 import { subtractDates } from '../utils/helpers';
 import { defaultBookingSettings } from '../utils/constants';
+
 import { bookings } from './data-bookings';
 import { cabins } from './data-cabins';
 import { guests } from './data-guests';
@@ -96,6 +97,7 @@ async function createBookings() {
 const StyledUploader = styled.div`
   display: flex;
   flex-direction: column;
+  align-items: center;
   width: 100%;
   position: absolute;
   bottom: 0;
@@ -106,6 +108,7 @@ const StyledUploader = styled.div`
   overflow: hidden;
 
   & > button {
+    width: fit-content;
     background-color: transparent;
     border: none;
     transition: color 0.3s;

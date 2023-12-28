@@ -1,8 +1,8 @@
-import { formatDistance, parse, parseISO, set } from 'date-fns';
+import { formatDistance, parseISO, set } from 'date-fns';
 import { differenceInDays } from 'date-fns/esm';
 
 export function formatDateStringToSupabase(dateString) {
-  const dateObject = parse(dateString, 'yyyy-MM-dd', new Date());
+  const dateObject = new Date(dateString);
   const formattedDate = set(dateObject, {
     hours: 1,
     minutes: 0,

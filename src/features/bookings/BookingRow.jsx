@@ -143,7 +143,11 @@ function BookingRow({ booking }) {
           </Menus.List>
 
           {status === 'unconfirmed' && (
-            <Modal.Window name='update' outsideClickCloseModal={false}>
+            <Modal.Window
+              name='update'
+              outsideClickCloseModal={false}
+              fixedHeight={true}
+            >
               <CreateBookingForm bookingToUpdate={booking} />
             </Modal.Window>
           )}

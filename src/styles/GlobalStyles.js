@@ -213,7 +213,6 @@ textarea:-webkit-autofill:disabled {
   box-shadow: 0 0 0 3rem var(--color-grey-200) inset;
   color: var(--color-grey-500);
 }
-
 `;
 
 export default GlobalStyles;

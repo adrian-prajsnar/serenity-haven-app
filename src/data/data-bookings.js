@@ -33,7 +33,7 @@ export const bookings = [
   },
   {
     created_at: fromToday(-27, true),
-    startDate: fromToday(12),
+    startDate: fromToday(15),
     endDate: fromToday(18),
     cabinId: 1,
     guestId: 4,

@@ -2,7 +2,7 @@ import supabase from './supabase';
 import { getToday } from '../utils/helpers';
 import { PAGE_SIZE } from '../utils/constants';
 
-export async function getBookings({ filter, sortBy, page }) {
+export async function getSortedBookings({ filter, sortBy, page }) {
   let query = supabase
     .from('bookings')
     .select(
@@ -33,6 +33,19 @@ export async function getBookings({ filter, sortBy, page }) {
   }
 
   return { data, count };
+}
+
+export async function getBookings() {
+  const { data, error } = await supabase
+    .from('bookings')
+    .select('*, cabins(*), guests(*)');
+
+  if (error) {
+    console.error(error);
+    throw new Error('Bookings could not be loaded');
+  }
+
+  return data;
 }
 
 export async function getBooking(id) {

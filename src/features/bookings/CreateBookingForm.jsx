@@ -1,9 +1,9 @@
+import { Controller, useForm } from 'react-hook-form';
+import { addDays, differenceInDays, isWithinInterval } from 'date-fns';
 import styled from 'styled-components';
-import { useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import { differenceInDays, format, parseISO, startOfDay } from 'date-fns';
 
 import { useSettings } from '../settings/useSettings';
+import { useBookings } from '../bookings/useBookings';
 import { useCabins } from '../cabins/useCabins';
 import { useCreateBooking } from './useCreateBooking';
 import { useUpdateBooking } from './useUpdateBooking';
@@ -11,7 +11,6 @@ import { useCountryFlags } from '../../hooks/useCountryFlags';
 import {
   formatCurrency,
   formatDateStringToSupabase,
-  subtractDates,
 } from '../../utils/helpers';
 
 import FormRow from '../../ui/FormRow';
@@ -22,6 +21,8 @@ import Button from '../../ui/Button';
 import CheckboxForm from '../../ui/CheckboxForm';
 import Textarea from '../../ui/Textarea';
 import SpinnerMini from '../../ui/SpinnerMini';
+import Spinner from '../../ui/Spinner';
+import DatePicker from '../../ui/DatePicker';
 
 const Summary = styled.p`
   min-width: 22.1rem;
@@ -37,12 +38,18 @@ const Summary = styled.p`
 `;
 
 function CreateBookingForm({ bookingToUpdate = {}, onCloseModal }) {
-  const { settings } = useSettings();
+  const { settings, isLoading: isLoadingSettings } = useSettings();
   const { cabins, isLoading: isLoadingCabins } = useCabins();
+  const { bookings, isLoading: isLoadingBookings } = useBookings();
   const { createBooking, isCreating } = useCreateBooking();
   const { updateBooking, isUpdating } = useUpdateBooking();
   const { countryFlags, isLoading: isLoadingCountryFlags } = useCountryFlags();
 
+  const isLoadingData =
+    isLoadingSettings ||
+    isLoadingCabins ||
+    isLoadingBookings ||
+    isLoadingCountryFlags;
   const isWorking = isCreating || isUpdating;
   const bookingId = bookingToUpdate?.id;
   const guestId = bookingToUpdate?.guests?.id;
@@ -53,9 +60,9 @@ function CreateBookingForm({ bookingToUpdate = {}, onCloseModal }) {
     handleSubmit,
     formState: { errors },
     setValue,
-    getValues,
     watch,
     reset,
+    control,
   } = useForm({
     defaultValues: isUpdateSession
       ? {
@@ -66,14 +73,8 @@ function CreateBookingForm({ bookingToUpdate = {}, onCloseModal }) {
           guestNationality: bookingToUpdate.guests.nationality,
           guestNationalId: bookingToUpdate.guests.nationalID,
           guestCountryFlag: bookingToUpdate.guests.countryFlag,
-          arrivalDate: format(
-            new Date(bookingToUpdate.startDate),
-            'yyyy-MM-dd'
-          ),
-          departureDate: format(
-            new Date(bookingToUpdate.endDate),
-            'yyyy-MM-dd'
-          ),
+          arrivalDate: new Date(bookingToUpdate.startDate),
+          departureDate: new Date(bookingToUpdate.endDate),
           observations: bookingToUpdate.observations,
           breakfastIncluded: bookingToUpdate.hasBreakfast,
           guestPaid: bookingToUpdate.isPaid,
@@ -81,12 +82,13 @@ function CreateBookingForm({ bookingToUpdate = {}, onCloseModal }) {
       : {
           cabinId: '',
           guestCountryFlag: '',
+          guestNationality: '',
         },
   });
 
   const {
     cabinId,
-    guestNumber = 2,
+    guestNumber,
     guestFullName,
     arrivalDate,
     departureDate,
@@ -106,7 +108,10 @@ function CreateBookingForm({ bookingToUpdate = {}, onCloseModal }) {
     cabin => cabin.id === parseInt(cabinId)
   );
 
-  const numNights = subtractDates(departureDate, arrivalDate);
+  const numNights =
+    differenceInDays(new Date(departureDate), new Date(arrivalDate)) <= 0
+      ? NaN
+      : differenceInDays(new Date(departureDate), new Date(arrivalDate));
 
   const cabinPrice =
     numNights * (selectedCabin?.regularPrice - selectedCabin?.discount);
@@ -117,17 +122,55 @@ function CreateBookingForm({ bookingToUpdate = {}, onCloseModal }) {
 
   const totalPrice = cabinPrice + extrasPrice;
 
-  useEffect(() => {
-    if (cabins) setValue('cabinId', bookingToUpdate?.cabins?.id);
-    if (countryFlags)
-      setValue('guestCountryFlag', bookingToUpdate?.guests?.countryFlag);
-  }, [
-    bookingToUpdate?.cabins?.id,
-    bookingToUpdate?.guests?.countryFlag,
-    cabins,
-    countryFlags,
-    setValue,
-  ]);
+  function getCurrentCabinExcludedDates() {
+    let sortedCabinBookedDates = bookings
+      .filter(booking => booking.cabins.id === selectedCabin?.id)
+      .map(booking => ({
+        start: new Date(booking.startDate),
+        end: new Date(booking.endDate),
+      }))
+      .sort((a, b) => a.start - b.start);
+
+    if (isUpdateSession) {
+      const currentBookingDates = {
+        start: new Date(bookingToUpdate.startDate),
+        end: new Date(bookingToUpdate.endDate),
+      };
+
+      sortedCabinBookedDates = sortedCabinBookedDates.filter(
+        dates =>
+          dates.start.getTime() !== currentBookingDates.start.getTime() &&
+          dates.end.getTime() !== currentBookingDates.end.getTime()
+      );
+    }
+
+    const additionalExcludedDates = sortedCabinBookedDates.flatMap(
+      (date, index, array) => {
+        const prevBookingEnd = date.end;
+        const nextBookingStart = array.at(index + 1)?.start;
+
+        if (
+          nextBookingStart &&
+          differenceInDays(nextBookingStart, prevBookingEnd) <=
+            settings?.minBookingLength
+        )
+          return {
+            start: new Date(prevBookingEnd),
+            end: new Date(nextBookingStart),
+          };
+        else return [];
+      }
+    );
+
+    const excludedDates = [
+      ...sortedCabinBookedDates,
+      ...additionalExcludedDates,
+    ];
+
+    return excludedDates;
+  }
+
+  if (isLoadingData) return <Spinner />;
 
   function onSubmit(data) {
     const guest = {
@@ -190,11 +233,8 @@ function CreateBookingForm({ bookingToUpdate = {}, onCloseModal }) {
       >
         <SelectForm
           {...register('cabinId', { required: 'This field is required' })}
-          disabled={isLoadingCabins || isWorking}
+          disabled={isWorking}
         >
-          <option value='' disabled>
-            Choose cabin
-          </option>
           {sortedCabins?.map(cabin => (
             <option key={cabin.id} value={cabin.id}>
               {cabin.name} / max: {cabin.maxCapacity} people /{' '}
@@ -268,7 +308,7 @@ function CreateBookingForm({ bookingToUpdate = {}, onCloseModal }) {
             {...register('guestCountryFlag', {
               required: 'This field is required',
             })}
-            disabled={isLoadingCountryFlags || isWorking}
+            disabled={isWorking}
             onChange={e =>
               setValue(
                 'guestNationality',
@@ -276,9 +316,6 @@ function CreateBookingForm({ bookingToUpdate = {}, onCloseModal }) {
               )
             }
           >
-            <option value='' disabled>
-              Choose country
-            </option>
             {sortedCountries?.map(country => (
               <option
                 key={country.code}
@@ -312,17 +349,43 @@ function CreateBookingForm({ bookingToUpdate = {}, onCloseModal }) {
         label='Arrival date'
         error={errors?.arrivalDate?.message}
       >
-        <Input
-          type='date'
-          id='arrivalDate'
-          disabled={isWorking}
-          {...register('arrivalDate', {
-            required: 'This field is required',
-            validate: value =>
-              value >= format(startOfDay(new Date()), 'yyyy-MM-dd') ||
-              'Arrival date cannot be before today',
-          })}
-        />
+        <div>
+          <Controller
+            control={control}
+            name='arrivalDate'
+            disabled={isWorking}
+            rules={{
+              required: 'This field is required',
+              validate: value => {
+                const isBetweenExcludedDates =
+                  getCurrentCabinExcludedDates()?.some(
+                    excludedDate =>
+                      isWithinInterval(excludedDate.start, {
+                        start: new Date(value),
+                        end: new Date(departureDate),
+                      }) ||
+                      isWithinInterval(excludedDate.end, {
+                        start: new Date(value),
+                        end: new Date(departureDate),
+                      })
+                  );
+
+                if (isBetweenExcludedDates)
+                  return `Cabin ${selectedCabin.name} has active bookings for the following dates`;
+              },
+            }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <DatePicker
+                minDate={new Date()}
+                selected={value}
+                onChange={onChange}
+                onBlur={onBlur}
+                excludeDateIntervals={getCurrentCabinExcludedDates()}
+                disabled={isWorking}
+              />
+            )}
+          ></Controller>
+        </div>
       </FormRow>
 
       <FormRow
@@ -330,31 +393,55 @@ function CreateBookingForm({ bookingToUpdate = {}, onCloseModal }) {
         label='Departure date'
         error={errors?.departureDate?.message}
       >
-        <Input
-          type='date'
-          id='departureDate'
-          disabled={isWorking}
-          {...register('departureDate', {
-            required: 'This field is required',
-            validate: value => {
-              if (
-                differenceInDays(
-                  parseISO(value),
-                  parseISO(getValues('arrivalDate'))
-                ) < settings?.minBookingLength
-              )
-                return `Stay has to be at least for ${settings?.minBookingLength} nights`;
+        <div>
+          <Controller
+            control={control}
+            name='departureDate'
+            disabled={isWorking}
+            rules={{
+              required: 'This field is required',
+              validate: value => {
+                if (
+                  differenceInDays(new Date(value), new Date(arrivalDate)) <
+                  settings?.minBookingLength
+                )
+                  return `Stay has to be at least for ${settings?.minBookingLength} nights`;
 
-              if (
-                differenceInDays(
-                  parseISO(value),
-                  parseISO(getValues('arrivalDate'))
-                ) > settings?.maxBookingLength
-              )
-                return `Stay cannot be more than ${settings?.maxBookingLength} nights`;
-            },
-          })}
-        />
+                if (
+                  differenceInDays(new Date(value), new Date(arrivalDate)) >
+                  settings?.maxBookingLength
+                )
+                  return `Stay cannot be more than ${settings?.maxBookingLength} nights`;
+
+                const isBetweenExcludedDates =
+                  getCurrentCabinExcludedDates()?.some(
+                    excludedDate =>
+                      isWithinInterval(excludedDate.start, {
+                        start: new Date(arrivalDate),
+                        end: new Date(value),
+                      }) ||
+                      isWithinInterval(excludedDate.end, {
+                        start: new Date(arrivalDate),
+                        end: new Date(value),
+                      })
+                  );
+
+                if (isBetweenExcludedDates)
+                  return `Cabin ${selectedCabin.name} has active bookings for the following dates`;
+              },
+            }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <DatePicker
+                minDate={addDays(new Date(), settings.minBookingLength)}
+                selected={value}
+                onChange={onChange}
+                onBlur={onBlur}
+                excludeDateIntervals={getCurrentCabinExcludedDates()}
+                disabled={isWorking}
+              />
+            )}
+          ></Controller>
+        </div>
       </FormRow>
 
       <FormRow
