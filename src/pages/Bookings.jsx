@@ -14,8 +14,8 @@ function Bookings() {
       </WrappingRow>
 
       <Row>
-        <BookingTable />
         <BookingOperations />
+        <BookingTable />
       </Row>
     </>
   );

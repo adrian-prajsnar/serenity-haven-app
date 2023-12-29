@@ -14,8 +14,8 @@ function Cabins() {
       </WrappingRow>
 
       <Row>
-        <CabinTable />
         <CabinOperations />
+        <CabinTable />
       </Row>
     </>
   );
