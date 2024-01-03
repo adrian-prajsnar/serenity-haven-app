@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 
 import { useSettings } from './useSettings';
 import { useUpdateSetting } from './useUpdateSetting';
@@ -16,6 +17,7 @@ function UpdateSettingsForm() {
   const { isUpdating, updateSetting } = useUpdateSetting();
   const { isLoadingDefaultSettings, loadDefaultSettings } =
     useLoadDefaultSettings();
+  const isWorking = isUpdating || isLoadingDefaultSettings;
 
   const [minNights, setMinNights] = useState('');
   const [maxNights, setMaxNights] = useState('');
@@ -36,10 +38,24 @@ function UpdateSettingsForm() {
     setBkfPrice(breakfastPrice || '');
   }, [settings]);
 
-  function handleUpdate(e, field) {
+  function handleUpdate(e, field, fieldName, min, max, isBreakfast = false) {
     const { value } = e.target;
     if (!value) return;
-    updateSetting({ [field]: value });
+
+    switch (true) {
+      case value < min:
+        toast.error(
+          `${fieldName} cannot be less than ${isBreakfast ? '$' : ''}${min} `
+        );
+        break;
+      case value > max:
+        toast.error(
+          `${fieldName} cannot exceed ${isBreakfast ? '$' : ''}${max} `
+        );
+        break;
+      default:
+        updateSetting({ [field]: value });
+    }
   }
 
   function handleLoadDefaultSettings(e) {
@@ -57,8 +73,10 @@ function UpdateSettingsForm() {
           id='min-nights'
           value={minNights}
           onChange={e => setMinNights(e.target.value)}
-          onBlur={e => handleUpdate(e, 'minBookingLength')}
-          disabled={isUpdating || isLoadingDefaultSettings}
+          onBlur={e =>
+            handleUpdate(e, 'minBookingLength', 'Minimum nights/booking', 1, 7)
+          }
+          disabled={isWorking}
         />
       </FormRow>
 
@@ -68,8 +86,10 @@ function UpdateSettingsForm() {
           id='max-nights'
           value={maxNights}
           onChange={e => setMaxNights(e.target.value)}
-          onBlur={e => handleUpdate(e, 'maxBookingLength')}
-          disabled={isUpdating || isLoadingDefaultSettings}
+          onBlur={e =>
+            handleUpdate(e, 'maxBookingLength', 'Maximum nights/booking', 7, 90)
+          }
+          disabled={isWorking}
         />
       </FormRow>
 
@@ -79,8 +99,16 @@ function UpdateSettingsForm() {
           id='max-guests'
           value={maxGuests}
           onChange={e => setMaxGuests(e.target.value)}
-          onBlur={e => handleUpdate(e, 'maxGuestsPerBooking')}
-          disabled={isUpdating || isLoadingDefaultSettings}
+          onBlur={e =>
+            handleUpdate(
+              e,
+              'maxGuestsPerBooking',
+              'Maximum guests/booking',
+              1,
+              30
+            )
+          }
+          disabled={isWorking}
         />
       </FormRow>
 
@@ -90,8 +118,17 @@ function UpdateSettingsForm() {
           id='breakfast-price'
           value={bkfPrice}
           onChange={e => setBkfPrice(e.target.value)}
-          onBlur={e => handleUpdate(e, 'breakfastPrice')}
-          disabled={isUpdating || isLoadingDefaultSettings}
+          onBlur={e =>
+            handleUpdate(
+              e,
+              'breakfastPrice',
+              'Breakfast price',
+              0.99,
+              99.99,
+              true
+            )
+          }
+          disabled={isWorking}
         />
       </FormRow>
 

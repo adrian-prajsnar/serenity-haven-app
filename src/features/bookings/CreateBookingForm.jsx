@@ -359,7 +359,7 @@ function CreateBookingForm({ bookingToUpdate = {}, onCloseModal }) {
             rules={{
               required: 'This field is required',
               validate: value => {
-                if (new Date(departureDate <= new Date(value)))
+                if (new Date(departureDate) <= new Date(value))
                   return 'Arrival date must be earlier than departure date';
 
                 const isBetweenExcludedDates =
@@ -406,7 +406,7 @@ function CreateBookingForm({ bookingToUpdate = {}, onCloseModal }) {
             rules={{
               required: 'This field is required',
               validate: value => {
-                if (new Date(value <= new Date(arrivalDate)))
+                if (new Date(value) <= new Date(arrivalDate))
                   return 'Departure date must be later than arrival date';
 
                 if (
