@@ -19,9 +19,9 @@ const StyledFormRow = styled.div`
     border-bottom: 1px solid var(--color-grey-100);
   }
 
-  &:has(> button) {
+  &:last-child {
     display: flex;
-    justify-content: flex-end;
+    justify-content: end;
     gap: 1.2rem;
   }
 
