@@ -11,7 +11,7 @@ export function useDeleteAllBookings() {
     onSuccess: () => {
       toast.success('Bookings successfully deleted');
       queryClient.invalidateQueries({
-        queryKey: 'bookings',
+        queryKey: ['all-bookings', 'bookings'],
       });
     },
     onError: err => toast.error(err.message),

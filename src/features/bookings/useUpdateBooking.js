@@ -12,7 +12,7 @@ export function useUpdateBooking() {
     onSuccess: () => {
       toast.success('Booking successfully updated');
       queryClient.invalidateQueries({
-        queryKey: ['bookings'],
+        queryKey: ['all-bookings', 'bookings'],
       });
     },
     onError: err => toast.error(err.message),

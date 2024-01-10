@@ -11,7 +11,7 @@ export function useCreateBooking() {
     onSuccess: () => {
       toast.success('Booking successfully created');
       queryClient.invalidateQueries({
-        queryKey: ['bookings'],
+        queryKey: ['all-bookings', 'bookings'],
       });
     },
     onError: err => toast.error(err.message),
