@@ -52,7 +52,7 @@ Make sure you have the following software installed on your system:
 1. Clone the repository:
 
 ```
-git clone https://github.com/adrian-prajsnar/express-crave-pizza-co.git
+git clone https://github.com/adrian-prajsnar/serenity-haven.git
 ```
 
 2. Navigate to the project folder:
