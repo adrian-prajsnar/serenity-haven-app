@@ -1,18 +1,26 @@
 import styled from 'styled-components';
 
 const StyledLogo = styled.div`
-  text-align: center;
-`;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 
-const Img = styled.img`
-  height: 9.6rem;
-  width: auto;
+  & img {
+    height: 9.6rem;
+    width: auto;
+  }
+
+  & span {
+    font-weight: 500;
+  }
 `;
 
 function Logo() {
   return (
     <StyledLogo>
-      <Img src='/logo.png' alt='Logo Serenity Haven' />
+      <img src='/logo.png' alt='Logo Serenity Haven' />
+      <span>Serenity Haven</span>
     </StyledLogo>
   );
 }
