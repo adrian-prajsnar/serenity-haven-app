@@ -1,20 +1,10 @@
-import styled, { css, keyframes } from 'styled-components';
+import styled, { css } from 'styled-components';
 import { cloneElement, createContext, useContext, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { HiXMark } from 'react-icons/hi2';
 
 import { useOutsideClick } from '../hooks/useOutsideClick';
 import { useKey } from '../hooks/useKey';
-
-const slideUpFadeInModal = keyframes`
-  0% {
-    transform: translate(-50%, calc(-50% + 30px));
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-`;
 
 const StyledModal = styled.div`
   position: fixed;
@@ -29,7 +19,6 @@ const StyledModal = styled.div`
   box-shadow: var(--shadow-lg);
   padding: 3.2rem 4rem;
   overflow-y: auto;
-  animation: ${slideUpFadeInModal} 0.3s ease-out forwards;
 
   ${props =>
     props.smallerWidth &&

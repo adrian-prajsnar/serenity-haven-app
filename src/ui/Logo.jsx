@@ -12,7 +12,8 @@ const StyledLogo = styled.div`
   }
 
   & span {
-    font-weight: 500;
+    font-family: Sono;
+    font-weight: 600;
   }
 `;
 
