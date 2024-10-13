@@ -1,6 +1,6 @@
 # Serenity Haven App
 
-[app-serenity-haven.netlify.app](https://app-serenity-haven.netlify.app//)
+[serenity-haven.netlify.app](https://serenity-haven.netlify.app//)
 
 ## Description
 
