@@ -56,7 +56,7 @@ function BookingRow({ booking }) {
     numNights,
     totalPrice,
     status,
-    guests: { fullName: guestName, email },
+    guests,
     cabins: { name: cabinName },
   } = booking;
 
@@ -79,8 +79,8 @@ function BookingRow({ booking }) {
       <Cabin>{cabinName}</Cabin>
 
       <Stacked>
-        <span>{guestName}</span>
-        <span>{email}</span>
+        <span>{guests?.fullName ?? '-'}</span>
+        <span>{guests?.email ?? '-'}</span>
       </Stacked>
 
       <Stacked>

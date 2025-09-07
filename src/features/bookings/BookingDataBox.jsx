@@ -145,7 +145,7 @@ function BookingDataBox({ booking }) {
     hasBreakfast,
     observations,
     isPaid,
-    guests: { fullName: guestName, email, country, countryFlag, nationalID },
+    guests,
     cabins: { name: cabinName },
   } = booking;
 
@@ -170,14 +170,20 @@ function BookingDataBox({ booking }) {
 
       <Section>
         <Guest>
-          {countryFlag && <Flag src={countryFlag} alt={`Flag of ${country}`} />}
+          {guests?.countryFlag && (
+            <Flag
+              src={guests?.countryFlag}
+              alt={`Flag of ${guests?.country}`}
+            />
+          )}
           <p>
-            {guestName} {numGuests > 1 ? `+ ${numGuests - 1} guests` : ''}
+            {guests?.fullName ?? '-'}{' '}
+            {numGuests > 1 ? `+ ${numGuests - 1} guests` : ''}
           </p>
           <span>&bull;</span>
-          <p>{email}</p>
+          <p>{guests?.email ?? '-'}</p>
           <span>&bull;</span>
-          <p>National ID {nationalID}</p>
+          <p>National ID {guests?.nationalID}</p>
         </Guest>
 
         {observations && (

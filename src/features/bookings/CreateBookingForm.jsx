@@ -66,18 +66,18 @@ function CreateBookingForm({ bookingToUpdate = {}, onCloseModal }) {
   } = useForm({
     defaultValues: isUpdateSession
       ? {
-          cabinId: bookingToUpdate.cabins.id,
-          guestNumber: bookingToUpdate.numGuests,
-          guestFullName: bookingToUpdate.guests.fullName,
-          guestEmail: bookingToUpdate.guests.email,
-          guestNationality: bookingToUpdate.guests.nationality,
-          guestNationalId: bookingToUpdate.guests.nationalID,
-          guestCountryFlag: bookingToUpdate.guests.countryFlag,
-          arrivalDate: new Date(bookingToUpdate.startDate),
-          departureDate: new Date(bookingToUpdate.endDate),
-          observations: bookingToUpdate.observations,
-          breakfastIncluded: bookingToUpdate.hasBreakfast,
-          guestPaid: bookingToUpdate.isPaid,
+          cabinId: bookingToUpdate?.cabins?.id,
+          guestNumber: bookingToUpdate?.numGuests,
+          guestFullName: bookingToUpdate?.guests?.fullName,
+          guestEmail: bookingToUpdate?.guests?.email,
+          guestNationality: bookingToUpdate?.guests?.nationality,
+          guestNationalId: bookingToUpdate?.guests?.nationalID,
+          guestCountryFlag: bookingToUpdate?.guests?.countryFlag,
+          arrivalDate: new Date(bookingToUpdate?.startDate),
+          departureDate: new Date(bookingToUpdate?.endDate),
+          observations: bookingToUpdate?.observations,
+          breakfastIncluded: bookingToUpdate?.hasBreakfast,
+          guestPaid: bookingToUpdate?.isPaid,
         }
       : {
           cabinId: '',
