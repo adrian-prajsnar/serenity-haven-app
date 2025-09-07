@@ -23,7 +23,7 @@ Serenity Haven is a full-stack application for hotels where staff can manage the
 Feel free to explore Serenity Haven using the following login credentials:
 
 - **Email address:** user.tester@example.com
-- **Password:** 1234
+- **Password:** test1234
 
 ## Table of Contents
 
